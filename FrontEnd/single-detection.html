@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单样本检测 - 恶意程序检测系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            dark: '#0f172a',
+                            glass: 'rgba(255, 255, 255, 0.05)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+        /* Matrix Canvas 样式 */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.3;
+            mix-blend-mode: screen;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        
+        /* Markdown Styles */
+        .markdown-body h1, .markdown-body h2 { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3em; margin-top: 1.5em; color: #38bdf8; }
+        .markdown-body p { margin-bottom: 1em; line-height: 1.6; }
+        .markdown-body ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
+        .markdown-body code { background: rgba(255,255,255,0.1); padding: 0.2em 0.4em; border-radius: 3px; color: #f472b6; font-family: monospace; }
+        .markdown-body pre { background: #1e293b; padding: 1em; border-radius: 8px; overflow-x: auto; margin-bottom: 1em; }
+        
+        /* 交互反馈样式 */
+        .module-card { transition: all 0.2s ease-in-out; }
+        .module-card:active { transform: scale(0.98); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+    <canvas id="matrixCanvas"></canvas>
+
+    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 hover:opacity-80 transition">
+                <i class="fa-solid fa-shield-halved mr-2"></i>MDS
+            </a>
+            <span class="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs border border-cyan-500/20">单样本模式</span>
+        </div>
+        <a href="index.html" class="text-gray-400 hover:text-white transition">
+            <i class="fa-solid fa-house mr-1"></i> 返回首页
+        </a>
+    </nav>
+
+    <main class="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1600px] mx-auto w-full relative z-10">
+        
+        <div class="lg:col-span-4 space-y-6">
+            
+            <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fa-solid fa-cloud-arrow-up mr-2 text-cyan-400"></i> 文件上传
+                </h3>
+                
+                <div id="dropZone" class="border-2 border-dashed border-gray-600 rounded-xl p-8 text-center transition-all duration-300 hover:border-cyan-500 hover:bg-cyan-500/5 cursor-pointer relative">
+                    <input type="file" id="fileInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleFileSelect(this)">
+                    <div id="uploadPlaceholder">
+                        <i class="fa-solid fa-file-shield text-4xl text-gray-500 mb-3 group-hover:scale-110 transition-transform"></i>
+                        <p class="text-gray-300 font-medium">拖拽文件到此处</p>
+                        <p class="text-gray-500 text-xs mt-1">支持 PE (.exe, .dll) 或 EVTX 文件</p>
+                    </div>
+                    <div id="fileInfo" class="hidden">
+                        <i class="fa-solid fa-file-code text-4xl text-cyan-400 mb-3"></i>
+                        <p id="fileName" class="text-white font-medium truncate">example.exe</p>
+                        <p id="fileSize" class="text-gray-500 text-xs">2.4 MB</p>
+                        <button onclick="resetUpload(event)" class="mt-3 text-xs text-red-400 hover:text-red-300 underline">移除文件</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6">
+                <h3 class="text-lg font-semibold mb-4">检测模块配置</h3>
+                <p class="text-xs text-gray-500 mb-3">点击已激活的模块可切换开启/关闭</p>
+                
+                <div class="space-y-3">
+                    <div id="moduleStatic" onclick="toggleModule('moduleStatic')" data-enabled="false" data-selected="false"
+                         class="module-card flex items-center justify-between p-3 rounded-lg bg-gray-800/50 border border-gray-700 opacity-30 cursor-not-allowed transition-all duration-300 select-none">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-gray-700 flex items-center justify-center icon-bg transition-colors">
+                                <i class="fa-solid fa-code text-gray-400 icon transition-colors"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-sm text-gray-300 module-title">静态检测</h4>
+                                <p class="text-xs text-gray-500">YARA 规则匹配</p>
+                            </div>
+                        </div>
+                        <i class="fa-regular fa-circle text-gray-600 status-icon text-lg transition-transform duration-300"></i>
+                    </div>
+
+                    <div id="moduleAI" onclick="toggleModule('moduleAI')" data-enabled="false" data-selected="false"
+                         class="module-card flex items-center justify-between p-3 rounded-lg bg-gray-800/50 border border-gray-700 opacity-30 cursor-not-allowed transition-all duration-300 select-none">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-gray-700 flex items-center justify-center icon-bg transition-colors">
+                                <i class="fa-solid fa-brain text-gray-400 icon transition-colors"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-sm text-gray-300 module-title">人工智能检测</h4>
+                                <p class="text-xs text-gray-500">机器学习模型</p>
+                            </div>
+                        </div>
+                        <i class="fa-regular fa-circle text-gray-600 status-icon text-lg transition-transform duration-300"></i>
+                    </div>
+
+                    <div id="moduleDynamic" onclick="toggleModule('moduleDynamic')" data-enabled="false" data-selected="false"
+                         class="module-card flex items-center justify-between p-3 rounded-lg bg-gray-800/50 border border-gray-700 opacity-30 cursor-not-allowed transition-all duration-300 select-none">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-gray-700 flex items-center justify-center icon-bg transition-colors">
+                                <i class="fa-solid fa-running text-gray-400 icon transition-colors"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-sm text-gray-300 module-title">动态检测</h4>
+                                <p class="text-xs text-gray-500">Sigma 日志分析</p>
+                            </div>
+                        </div>
+                        <i class="fa-regular fa-circle text-gray-600 status-icon text-lg transition-transform duration-300"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6">
+                <h3 class="text-lg font-semibold mb-4">智能分析设置</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-globe text-cyan-400"></i>
+                        <span class="text-sm font-medium">允许 LLM 联网</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="internetToggle" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-500 shadow-inner"></div>
+                    </label>
+                </div>
+                <p class="text-xs text-gray-400 bg-gray-800/50 p-2 rounded">
+                    <i class="fa-solid fa-circle-info mr-1"></i> 启用后，大模型将访问最新的威胁情报数据库以丰富分析报告。
+                </p>
+            </div>
+
+            <button id="analyzeBtn" onclick="startAnalysis()" disabled class="w-full py-4 rounded-xl font-bold text-lg bg-gray-700 text-gray-400 cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg">
+                <i class="fa-solid fa-play"></i> 开始分析
+            </button>
+
+        </div>
+
+        <div class="lg:col-span-8 flex flex-col h-full">
+            <div class="glass-panel rounded-2xl flex-1 p-0 flex flex-col overflow-hidden relative min-h-[600px]">
+                <div class="p-6 border-b border-gray-700 bg-gray-900/40 flex justify-between items-center">
+                    <h2 class="text-xl font-bold flex items-center">
+                        <i class="fa-solid fa-file-medical-alt mr-2 text-purple-400"></i> 分析报告
+                    </h2>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-sm transition text-gray-300">
+                            <i class="fa-regular fa-eye mr-1"></i> 预览
+                        </button>
+                        <button class="px-3 py-1.5 rounded-lg bg-cyan-600/20 text-cyan-400 hover:bg-cyan-600/40 border border-cyan-500/30 text-sm transition">
+                            <i class="fa-solid fa-download mr-1"></i> 下载报告
+                        </button>
+                    </div>
+                </div>
+
+                <div id="reportEmpty" class="flex-1 flex flex-col items-center justify-center text-gray-500 p-10">
+                    <div class="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center mb-4 animate-pulse">
+                        <i class="fa-solid fa-wave-square text-3xl"></i>
+                    </div>
+                    <p>等待上传样本并开始分析...</p>
+                </div>
+
+                <div id="reportLoading" class="hidden absolute inset-0 bg-gray-900/90 z-20 flex flex-col items-center justify-center">
+                    <div class="relative w-24 h-24">
+                        <div class="absolute inset-0 border-t-4 border-cyan-500 border-solid rounded-full animate-spin"></div>
+                        <div class="absolute inset-2 border-t-4 border-purple-500 border-solid rounded-full animate-spin" style="animation-direction: reverse;"></div>
+                    </div>
+                    <p class="mt-6 text-cyan-400 font-mono text-lg animate-pulse">正在进行多维威胁检测...</p>
+                    <div class="mt-2 text-sm text-gray-400 space-y-1 text-center">
+                        <p id="loadingStep1" class="transition-opacity opacity-50">正在加载 YARA 规则...</p>
+                        <p id="loadingStep2" class="transition-opacity opacity-0">AI 模型推理中...</p>
+                        <p id="loadingStep3" class="transition-opacity opacity-0">生成威胁情报报告...</p>
+                    </div>
+                </div>
+
+                <div id="reportContent" class="hidden flex-1 overflow-y-auto p-8 bg-gray-900/20 markdown-body text-gray-300 text-sm">
+                    </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let currentFileType = null;
+
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // UI Update
+            document.getElementById('uploadPlaceholder').classList.add('hidden');
+            document.getElementById('fileInfo').classList.remove('hidden');
+            document.getElementById('fileName').innerText = file.name;
+            document.getElementById('fileSize').innerText = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+
+            // Identify Type & Activate Modules
+            const ext = file.name.split('.').pop().toLowerCase();
+            resetModules(); // First disable all
+
+            if (ext === 'evtx') {
+                currentFileType = 'evtx';
+                activateModule('moduleDynamic', 'bg-purple-500/20', 'text-purple-400', 'border-purple-500/50');
+            } else {
+                currentFileType = 'pe';
+                activateModule('moduleStatic', 'bg-cyan-500/20', 'text-cyan-400', 'border-cyan-500/50');
+                activateModule('moduleAI', 'bg-blue-500/20', 'text-blue-400', 'border-blue-500/50');
+            }
+
+            checkAnalyzeButton();
+        }
+
+        function resetUpload(e) {
+            e.stopPropagation();
+            document.getElementById('fileInput').value = '';
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('fileInfo').classList.add('hidden');
+            resetModules();
+            checkAnalyzeButton();
+        }
+
+        function resetModules() {
+            ['moduleStatic', 'moduleAI', 'moduleDynamic'].forEach(id => {
+                const el = document.getElementById(id);
+                // Reset State
+                el.setAttribute('data-enabled', 'false');
+                el.setAttribute('data-selected', 'false');
+                
+                // Reset Styles (Disable look)
+                el.classList.add('opacity-30', 'cursor-not-allowed');
+                el.classList.remove('opacity-100', 'cursor-pointer', 'border-cyan-500/50', 'border-blue-500/50', 'border-purple-500/50');
+                el.classList.add('border-gray-700');
+                
+                // Reset Icon Colors
+                el.querySelector('.icon-bg').className = "w-8 h-8 rounded bg-gray-700 flex items-center justify-center icon-bg transition-colors";
+                el.querySelector('.icon').className = "fa-solid " + (id === 'moduleStatic' ? 'fa-code' : id === 'moduleAI' ? 'fa-brain' : 'fa-running') + " text-gray-400 icon transition-colors";
+                el.querySelector('.module-title').classList.remove('text-white');
+                el.querySelector('.module-title').classList.add('text-gray-300');
+                
+                // Reset Checkmark
+                const statusIcon = el.querySelector('.status-icon');
+                statusIcon.className = "fa-regular fa-circle text-gray-600 status-icon text-lg transition-transform duration-300";
+            });
+        }
+
+        // Activates the module (makes it allowed for this file type)
+        function activateModule(id, bgClass, textClass, borderClass) {
+            const el = document.getElementById(id);
+            el.setAttribute('data-enabled', 'true');
+            // Store theme classes for toggling later
+            el.setAttribute('data-theme-bg', bgClass);
+            el.setAttribute('data-theme-text', textClass);
+            el.setAttribute('data-theme-border', borderClass);
+            
+            // Default to selected
+            selectModule(id, true);
+        }
+
+        // Handles user click
+        function toggleModule(id) {
+            const el = document.getElementById(id);
+            if (el.getAttribute('data-enabled') !== 'true') return; // Ignore if disabled
+
+            const isSelected = el.getAttribute('data-selected') === 'true';
+            selectModule(id, !isSelected);
+            checkAnalyzeButton();
+        }
+
+        // Internal function to update visual state based on selection
+        function selectModule(id, isSelected) {
+            const el = document.getElementById(id);
+            const bgClass = el.getAttribute('data-theme-bg');
+            const textClass = el.getAttribute('data-theme-text');
+            const borderClass = el.getAttribute('data-theme-border');
+            
+            el.setAttribute('data-selected', isSelected.toString());
+            
+            // Common Active Styles
+            el.classList.remove('opacity-30', 'cursor-not-allowed');
+            el.classList.add('cursor-pointer');
+
+            if (isSelected) {
+                // Selected State (Bright, Colored)
+                el.classList.remove('opacity-60', 'border-gray-600');
+                el.classList.add('opacity-100', borderClass);
+                
+                el.querySelector('.icon-bg').classList.add(bgClass.split(' ')[0]);
+                el.querySelector('.icon').classList.remove('text-gray-400');
+                el.querySelector('.icon').classList.add(textClass);
+                
+                el.querySelector('.module-title').classList.add('text-white');
+                
+                const statusIcon = el.querySelector('.status-icon');
+                statusIcon.className = `fa-solid fa-circle-check ${textClass} status-icon text-lg`;
+                statusIcon.style.transform = "scale(1.1)";
+            } else {
+                // Unselected but Enabled State (Dimmer, Grayscale-ish)
+                el.classList.remove('opacity-100', borderClass);
+                el.classList.add('opacity-60', 'border-gray-600'); // Slightly visible but dim
+                
+                // Revert Icon colors to gray but keep shape
+                el.querySelector('.icon-bg').classList.remove(bgClass.split(' ')[0]);
+                el.querySelector('.icon').classList.remove(textClass);
+                el.querySelector('.icon').classList.add('text-gray-400');
+                
+                el.querySelector('.module-title').classList.remove('text-white');
+                
+                const statusIcon = el.querySelector('.status-icon');
+                statusIcon.className = "fa-regular fa-circle text-gray-500 status-icon text-lg";
+                statusIcon.style.transform = "scale(1)";
+            }
+        }
+
+        function checkAnalyzeButton() {
+            const btn = document.getElementById('analyzeBtn');
+            const fileUploaded = document.getElementById('fileInput').files.length > 0;
+            
+            // Check if at least one module is selected
+            const anyModuleSelected = ['moduleStatic', 'moduleAI', 'moduleDynamic'].some(id => 
+                document.getElementById(id).getAttribute('data-selected') === 'true'
+            );
+
+            if (fileUploaded && anyModuleSelected) {
+                btn.disabled = false;
+                btn.className = "w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white cursor-pointer transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-[1.02]";
+                btn.innerHTML = '<i class="fa-solid fa-play"></i> 开始分析';
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full py-4 rounded-xl font-bold text-lg bg-gray-700 text-gray-400 cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg";
+                if(!fileUploaded) btn.innerHTML = '<i class="fa-solid fa-play"></i> 等待上传...';
+                else btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 请选择至少一个检测模块';
+            }
+        }
+
+        function startAnalysis() {
+            const loading = document.getElementById('reportLoading');
+            const empty = document.getElementById('reportEmpty');
+            const content = document.getElementById('reportContent');
+
+            empty.classList.add('hidden');
+            content.classList.add('hidden');
+            loading.classList.remove('hidden');
+
+            // Simulated Steps based on selected modules
+            const staticSelected = document.getElementById('moduleStatic').getAttribute('data-selected') === 'true';
+            const aiSelected = document.getElementById('moduleAI').getAttribute('data-selected') === 'true';
+            
+            // Reset loading text
+            document.getElementById('loadingStep1').className = "transition-opacity opacity-0 text-gray-500";
+            document.getElementById('loadingStep2').className = "transition-opacity opacity-0 text-gray-500";
+            
+            // Animate loading text
+            if(staticSelected) setTimeout(() => document.getElementById('loadingStep1').className = "transition-opacity opacity-100 text-cyan-400", 500);
+            if(aiSelected) setTimeout(() => document.getElementById('loadingStep2').className = "transition-opacity opacity-100 text-blue-400", 2000);
+            
+            setTimeout(() => document.getElementById('loadingStep3').classList.remove('opacity-0'), 3000);
+
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                content.classList.remove('hidden');
+                renderReport();
+            }, 4500);
+        }
+
+        function renderReport() {
+            const internet = document.getElementById('internetToggle').checked;
+            const staticSelected = document.getElementById('moduleStatic').getAttribute('data-selected') === 'true';
+            const aiSelected = document.getElementById('moduleAI').getAttribute('data-selected') === 'true';
+            const dynamicSelected = document.getElementById('moduleDynamic').getAttribute('data-selected') === 'true';
+
+            // Generate report content based on selections
+            let staticResult = staticSelected ? "| **静态检测** | ⚠️ 恶意 | 匹配 YARA 规则 \`WannaCry_Ransomware\` |" : "| **静态检测** | - | 未选择该模块 |";
+            let aiResult = aiSelected ? "| **AI 检测** | ⚠️ 恶意 | 恶意代码相似度 98.5% |" : "| **AI 检测** | - | 未选择该模块 |";
+            let dynamicResult = dynamicSelected ? "| **动态检测** | ✅ 良性 | 无异常行为 |" : "| **动态检测** | - | 未启用 (非 EVTX) |";
+
+            const md = `
+# 恶意程序分析报告
+
+**样本名称**: ${document.getElementById('fileName').innerText}  
+**威胁等级**: <span style="color:#ef4444; font-weight:bold;">高危 (High)</span>  
+**检测时间**: ${new Date().toLocaleString()}
+
+---
+
+## 1. 检测结果汇总
+
+| 模块 | 结果 | 详情 |
+|------|------|------|
+${staticResult}
+${aiResult}
+${dynamicResult}
+
+## 2. 行为分析
+
+${staticSelected || aiSelected ? `系统监测到以下可疑行为特征：
+* 尝试修改注册表启动项 \`HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\`
+* 调用加密相关 API \`CryptEncrypt\`` : '未进行深度行为检测。'}
+* ${internet ? '尝试连接 C2 服务器 `192.168.1.105` (已确认为已知恶意IP)' : '尝试建立异常网络连接'}
+
+## 3. 威胁情报 (联网增强)
+
+${internet ? '> **INTEL UPDATE:** 该样本 Hash 与 **Lazarus Group** 攻击活动高度相关。CVE-2017-0144 (EternalBlue) 被用于传播。' : '> *未启用联网查询，仅基于本地特征分析。建议启用 Internet 选项以获取最新情报。*'}
+
+## 4. 防护建议
+
+1.  立即隔离受感染主机。
+2.  封锁相关 IP 地址。
+3.  更新系统补丁，特别是 SMB 服务。
+            `;
+            document.getElementById('reportContent').innerHTML = marked.parse(md);
+        }
+
+        // Matrix Rain (Background)
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        const chars = '01';
+        const charArray = chars.split('');
+        const fontSize = 16;
+        let columns = width / fontSize;
+        const drops = [];
+        for (let i = 0; i < columns; i++) { drops[i] = Math.random() * -100; }
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = '#06b6d4';
+            ctx.font = fontSize + 'px monospace';
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#06b6d4';
+            for (let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > height && Math.random() > 0.98) { drops[i] = 0; }
+                drops[i]++;
+            }
+            ctx.shadowBlur = 0;
+        }
+        setInterval(drawMatrix, 33);
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            const newColumns = Math.ceil(width / fontSize);
+            if (newColumns > columns) { for (let i = columns; i < newColumns; i++) { drops[i] = Math.random() * -100; } }
+            columns = newColumns;
+        });
+    </script>
+</body>
+</html>

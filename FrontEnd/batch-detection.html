@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量检测 - 恶意程序检测系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            dark: '#0f172a',
+                            glass: 'rgba(255, 255, 255, 0.05)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.3;
+            mix-blend-mode: screen;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+        .table-row-hover:hover {
+            background: rgba(56, 189, 248, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+    <canvas id="matrixCanvas"></canvas>
+
+    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <a href="index.html" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500 hover:opacity-80 transition">
+                <i class="fa-solid fa-layer-group mr-2"></i>MDS
+            </a>
+            <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs border border-purple-500/20">批量检测模式</span>
+        </div>
+        <a href="index.html" class="text-gray-400 hover:text-white transition">
+            <i class="fa-solid fa-house mr-1"></i> 返回首页
+        </a>
+    </nav>
+
+    <main class="flex-1 p-6 container mx-auto max-w-7xl relative z-10">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="glass-panel rounded-2xl p-6 md:col-span-1 relative group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+                <h3 class="font-semibold mb-3">1. 上传样本集</h3>
+                <div class="border-2 border-dashed border-gray-600 rounded-xl p-4 text-center hover:bg-purple-500/5 hover:border-purple-500 transition cursor-pointer h-32 flex flex-col justify-center items-center">
+                    <input type="file" multiple id="batchInput" class="hidden" onchange="handleBatchSelect(this)">
+                    <label for="batchInput" class="cursor-pointer w-full h-full flex flex-col justify-center items-center">
+                        <i class="fa-solid fa-folder-open text-2xl text-purple-400 mb-2"></i>
+                        <span class="text-sm text-gray-300">选择文件夹或多个文件</span>
+                        <span id="fileCount" class="text-xs text-gray-500 mt-1">未选择文件</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:col-span-1 relative">
+                <div class="absolute top-0 left-0 w-1 h-full bg-pink-500"></div>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-semibold">2. Ground Truth (可选)</h3>
+                    <i class="fa-solid fa-circle-question text-gray-500 text-xs"></i>
+                </div>
+                <div class="border-2 border-dashed border-gray-600 rounded-xl p-4 text-center hover:bg-pink-500/5 hover:border-pink-500 transition cursor-pointer h-32 flex flex-col justify-center items-center">
+                    <input type="file" id="gtInput" class="hidden" onchange="handleGTSelect(this)">
+                    <label for="gtInput" class="cursor-pointer w-full h-full flex flex-col justify-center items-center">
+                        <i class="fa-solid fa-table text-2xl text-pink-400 mb-2"></i>
+                        <span class="text-sm text-gray-300">上传 CSV/JSON 标签</span>
+                        <span id="gtStatus" class="text-xs text-gray-500 mt-1">未上传</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:col-span-1 flex flex-col justify-between">
+                <div>
+                    <h3 class="font-semibold mb-2">3. 执行分析</h3>
+                    <p class="text-xs text-gray-400 mb-4">系统将自动识别类型，您可在此确认模块状态：</p>
+                    
+                    <div class="flex gap-2">
+                         <div id="batchStatic" onclick="toggleBatchModule('batchStatic')" data-selected="true" class="flex-1 p-2 bg-gray-800 rounded text-center text-xs border border-gray-600 cursor-pointer hover:border-purple-400 transition">
+                            <i class="fa-solid fa-code mb-1 block"></i> 静态
+                         </div>
+                         <div id="batchAI" onclick="toggleBatchModule('batchAI')" data-selected="true" class="flex-1 p-2 bg-gray-800 rounded text-center text-xs border border-gray-600 cursor-pointer hover:border-purple-400 transition">
+                            <i class="fa-solid fa-brain mb-1 block"></i> AI
+                         </div>
+                         <div id="batchDynamic" onclick="toggleBatchModule('batchDynamic')" data-selected="true" class="flex-1 p-2 bg-gray-800 rounded text-center text-xs border border-gray-600 cursor-pointer hover:border-purple-400 transition">
+                            <i class="fa-solid fa-running mb-1 block"></i> 动态
+                         </div>
+                    </div>
+                </div>
+                <button id="batchStartBtn" onclick="startBatchAnalysis()" disabled class="w-full py-3 rounded-lg font-bold bg-gray-700 text-gray-500 cursor-not-allowed transition shadow-lg flex items-center justify-center gap-2 mt-4">
+                    <i class="fa-solid fa-bolt"></i> 开始批量处理
+                </button>
+            </div>
+        </div>
+
+        <div id="progressSection" class="hidden mb-8">
+            <div class="flex justify-between text-sm text-gray-400 mb-2">
+                <span>正在处理... <span id="currentProcessFile">sample_42.exe</span></span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div class="w-full bg-gray-800 rounded-full h-2.5 overflow-hidden">
+                <div id="progressBar" class="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div id="metricsDashboard" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="glass-panel p-4 rounded-xl text-center border-b-4 border-green-500">
+                <p class="text-gray-400 text-xs uppercase">Accuracy</p>
+                <p class="text-3xl font-bold text-white">94.2%</p>
+            </div>
+            <div class="glass-panel p-4 rounded-xl text-center border-b-4 border-yellow-500">
+                <p class="text-gray-400 text-xs uppercase">Precision</p>
+                <p class="text-3xl font-bold text-white">91.5%</p>
+            </div>
+            <div class="glass-panel p-4 rounded-xl text-center border-b-4 border-red-500">
+                <p class="text-gray-400 text-xs uppercase">漏报率 (FNR)</p>
+                <p class="text-3xl font-bold text-white">3.1%</p>
+            </div>
+            <div class="glass-panel p-4 rounded-xl text-center border-b-4 border-orange-500">
+                <p class="text-gray-400 text-xs uppercase">错报率 (FPR)</p>
+                <p class="text-3xl font-bold text-white">5.8%</p>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-2xl overflow-hidden min-h-[400px] flex flex-col">
+            <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-900/40">
+                <h3 class="font-semibold"><i class="fa-solid fa-list-check mr-2"></i>检测结果列表</h3>
+                <div class="flex gap-2">
+                    <button class="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded transition">
+                        <i class="fa-solid fa-filter mr-1"></i> 筛选错误
+                    </button>
+                    <button class="text-xs bg-purple-600/30 text-purple-300 border border-purple-500/30 hover:bg-purple-600/50 px-3 py-1.5 rounded transition">
+                        <i class="fa-solid fa-file-csv mr-1"></i> 导出 CSV
+                    </button>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto flex-1">
+                <table class="w-full text-left text-sm text-gray-400">
+                    <thead class="bg-gray-800/50 text-xs uppercase text-gray-200">
+                        <tr>
+                            <th class="px-6 py-3">文件名</th>
+                            <th class="px-6 py-3">类型</th>
+                            <th class="px-6 py-3">检测结果</th>
+                            <th class="px-6 py-3">GT 标签</th>
+                            <th class="px-6 py-3">状态</th>
+                            <th class="px-6 py-3">详情</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultTableBody" class="divide-y divide-gray-700">
+                        <tr id="tableEmpty">
+                            <td colspan="6" class="px-6 py-20 text-center text-gray-500">
+                                请上传文件并开始分析以查看结果
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let hasGT = false;
+        
+        function handleBatchSelect(input) {
+            const count = input.files.length;
+            document.getElementById('fileCount').innerText = `已选择 ${count} 个文件`;
+            document.getElementById('fileCount').classList.add('text-purple-400');
+            
+            const btn = document.getElementById('batchStartBtn');
+            btn.disabled = false;
+            btn.className = "w-full py-3 rounded-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white cursor-pointer transition shadow-[0_0_15px_rgba(192,132,252,0.4)] hover:scale-[1.02] flex items-center justify-center gap-2 mt-4";
+
+            // Update mini indicators visually
+            updateBatchModule('batchStatic', true);
+            updateBatchModule('batchAI', true);
+            updateBatchModule('batchDynamic', true);
+        }
+
+        function handleGTSelect(input) {
+            document.getElementById('gtStatus').innerText = input.files[0].name;
+            document.getElementById('gtStatus').classList.add('text-pink-400');
+            hasGT = true;
+        }
+
+        function toggleBatchModule(id) {
+            const el = document.getElementById(id);
+            const isSelected = el.getAttribute('data-selected') === 'true';
+            updateBatchModule(id, !isSelected);
+        }
+
+        function updateBatchModule(id, isSelected) {
+            const el = document.getElementById(id);
+            el.setAttribute('data-selected', isSelected.toString());
+            if (isSelected) {
+                el.classList.add('bg-purple-600/20', 'text-purple-300', 'border-purple-500');
+                el.classList.remove('bg-gray-800', 'text-gray-500', 'border-gray-600');
+            } else {
+                el.classList.remove('bg-purple-600/20', 'text-purple-300', 'border-purple-500');
+                el.classList.add('bg-gray-800', 'text-gray-500', 'border-gray-600');
+            }
+        }
+
+        function startBatchAnalysis() {
+            document.getElementById('progressSection').classList.remove('hidden');
+            const bar = document.getElementById('progressBar');
+            const percent = document.getElementById('progressPercent');
+            
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    finishAnalysis();
+                } else {
+                    width++;
+                    bar.style.width = width + '%';
+                    percent.innerText = width + '%';
+                }
+            }, 30);
+        }
+
+        function finishAnalysis() {
+            document.getElementById('progressSection').classList.add('hidden');
+            if(hasGT) document.getElementById('metricsDashboard').classList.remove('hidden');
+            
+            const tbody = document.getElementById('resultTableBody');
+            document.getElementById('tableEmpty').style.display = 'none';
+            
+            // Check selections
+            const useAI = document.getElementById('batchAI').getAttribute('data-selected') === 'true';
+            const useStatic = document.getElementById('batchStatic').getAttribute('data-selected') === 'true';
+
+            // Mock Data Generation
+            const mockData = [
+                { name: 'invoice_scan.exe', type: 'PE', result: 'Malicious', gt: 1, engine: (useAI && useStatic) ? 'AI, Static' : 'Skipped' },
+                { name: 'system_log.evtx', type: 'EVTX', result: 'Benign', gt: 0, engine: 'Dynamic' },
+                { name: 'powershell_script.ps1', type: 'Script', result: 'Malicious', gt: 1, engine: 'Static' },
+                { name: 'calc.exe', type: 'PE', result: 'Benign', gt: 0, engine: 'AI' },
+                { name: 'unknown_sample.dll', type: 'PE', result: 'Benign', gt: 1, engine: 'AI' },
+            ];
+
+            tbody.innerHTML = mockData.map(row => {
+                const isCorrect = hasGT ? ((row.result === 'Malicious' ? 1 : 0) === row.gt) : true;
+                const statusBadge = hasGT 
+                    ? (isCorrect 
+                        ? '<span class="px-2 py-0.5 rounded bg-green-500/20 text-green-400 text-xs border border-green-500/30">正确</span>'
+                        : '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-xs border border-red-500/30 font-bold">错误</span>')
+                    : '<span class="text-gray-500">-</span>';
+
+                const resultColor = row.result === 'Malicious' ? 'text-red-400' : 'text-green-400';
+
+                return `
+                <tr class="table-row-hover transition ${hasGT && !isCorrect ? 'bg-red-500/5' : ''}">
+                    <td class="px-6 py-4 font-medium text-white">${row.name}</td>
+                    <td class="px-6 py-4"><span class="bg-gray-700 px-2 py-1 rounded text-xs">${row.type}</span></td>
+                    <td class="px-6 py-4 ${resultColor} font-semibold">${row.result === 'Malicious' ? '<i class="fa-solid fa-bug mr-1"></i> 恶意' : '<i class="fa-solid fa-shield mr-1"></i> 良性'}</td>
+                    <td class="px-6 py-4">${hasGT ? (row.gt ? '恶意' : '良性') : '-'}</td>
+                    <td class="px-6 py-4">${statusBadge}</td>
+                    <td class="px-6 py-4 text-xs text-gray-500">${row.engine}</td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        // Matrix Rain (Same as others)
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        const chars = '01';
+        const charArray = chars.split('');
+        const fontSize = 16;
+        let columns = width / fontSize;
+        const drops = [];
+        for (let i = 0; i < columns; i++) { drops[i] = Math.random() * -100; }
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.1)';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = '#06b6d4';
+            ctx.font = fontSize + 'px monospace';
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#06b6d4';
+            for (let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > height && Math.random() > 0.98) { drops[i] = 0; }
+                drops[i]++;
+            }
+            ctx.shadowBlur = 0;
+        }
+        setInterval(drawMatrix, 33);
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            const newColumns = Math.ceil(width / fontSize);
+            if (newColumns > columns) { for (let i = columns; i < newColumns; i++) { drops[i] = Math.random() * -100; } }
+            columns = newColumns;
+        });
+    </script>
+</body>
+</html>

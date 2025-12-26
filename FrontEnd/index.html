@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>恶意程序检测系统 - 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            dark: '#0f172a',
+                            glass: 'rgba(255, 255, 255, 0.05)',
+                            border: 'rgba(255, 255, 255, 0.1)',
+                            cyan: '#06b6d4',
+                            purple: '#8b5cf6'
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            /* 移除之前的静态渐变背景，改用纯色底，由 Canvas 提供动态效果 */
+            /* background-image: radial-gradient(...) */
+            font-family: 'Inter', sans-serif;
+            color: white;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        /* 新增：Matrix Canvas 样式 */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* 确保不阻挡鼠标交互 */
+            z-index: 0; /* 位于背景层 */
+            opacity: 0.4; /* 调整透明度，不要太抢眼 */
+            mix-blend-mode: screen; /* 混合模式让光感更强 */
+        }
+        /* 调整原有背景Blob的层级，放在Canvas后面 */
+        .bg-blob {
+            z-index: -1; 
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: particle-anim 1s ease-out forwards;
+            background: white;
+            border-radius: 50%;
+        }
+        @keyframes particle-anim {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center relative">
+
+    <canvas id="matrixCanvas"></canvas>
+
+    <div class="bg-blob absolute top-0 -left-4 w-72 h-72 bg-purple-800 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-blob"></div>
+    <div class="bg-blob absolute top-0 -right-4 w-72 h-72 bg-cyan-800 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-blob animation-delay-2000"></div>
+    <div class="bg-blob absolute -bottom-8 left-20 w-72 h-72 bg-blue-800 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-blob animation-delay-4000"></div>
+
+    <div class="container mx-auto px-4 relative z-10 text-center">
+        <div class="mb-16">
+            <div class="inline-block p-4 rounded-full glass-panel mb-6 animate-pulse-slow">
+                <i class="fa-solid fa-shield-halved text-5xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500"></i>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-tight text-shadow-cyan">
+                恶意程序<span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">检测系统</span>
+            </h1>
+            <p class="text-gray-400 text-xl max-w-2xl mx-auto font-light">
+                基于威胁情报的多维度检测与分析平台，利用 AI 与规则引擎为您提供深度的安全洞察。
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <a href="single-detection.html" class="group relative block" onclick="createParticles(event)">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl blur opacity-30 group-hover:opacity-100 transition duration-500"></div>
+                <div class="relative glass-panel rounded-2xl p-8 h-full flex flex-col items-center justify-center hover:-translate-y-2 transition-transform duration-300">
+                    <div class="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-microscope text-2xl text-cyan-400"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3">单样本检测</h3>
+                    <p class="text-gray-400 text-sm mb-6">深度分析单个文件，生成包含静态、AI及动态行为的详细威胁报告。</p>
+                    <span class="inline-flex items-center text-cyan-400 font-medium group-hover:translate-x-1 transition-transform">
+                        进入系统 <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </span>
+                </div>
+            </a>
+
+            <a href="batch-detection.html" class="group relative block" onclick="createParticles(event)">
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-30 group-hover:opacity-100 transition duration-500"></div>
+                <div class="relative glass-panel rounded-2xl p-8 h-full flex flex-col items-center justify-center hover:-translate-y-2 transition-transform duration-300">
+                    <div class="w-16 h-16 bg-purple-500/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-layer-group text-2xl text-purple-400"></i>
+                    </div>
+                    <h3 class="text-2xl font-semibold mb-3">批量样本检测</h3>
+                    <p class="text-gray-400 text-sm mb-6">高效处理大量样本，结合 Ground Truth 进行性能评估与统计分析。</p>
+                    <span class="inline-flex items-center text-purple-400 font-medium group-hover:translate-x-1 transition-transform">
+                        进入系统 <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </span>
+                </div>
+            </a>
+        </div>
+        
+        <footer class="mt-20 text-gray-500 text-sm">
+            &copy; 2024 Malware Detection System. All rights reserved.
+        </footer>
+    </div>
+
+    <script>
+        function createParticles(e) {
+            const btn = e.currentTarget;
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('span');
+                particle.classList.add('particle');
+                const size = Math.random() * 5 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 100 + 50;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+                
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                
+                btn.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+    </script>
+
+    <script>
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 设置 Canvas 宽高为窗口大小
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        // 定义要下落的字符 (二进制)
+        const chars = '01';
+        const charArray = chars.split('');
+        const fontSize = 16; // 字体大小
+        let columns = width / fontSize; // 计算列数
+
+        // 初始化每列的Y坐标 (从屏幕上方随机位置开始)
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100; 
+        }
+
+        function drawMatrix() {
+            // 绘制半透明黑色蒙版，形成拖尾效果
+            // 使用与主题背景色一致的深色
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.1)'; 
+            ctx.fillRect(0, 0, width, height);
+
+            // 设置文字样式 (霓虹青色)
+            ctx.fillStyle = '#06b6d4'; 
+            ctx.font = fontSize + 'px monospace';
+            ctx.shadowBlur = 8; // 添加一点发光效果
+            ctx.shadowColor = '#06b6d4';
+
+            // 循环绘制每一列
+            for (let i = 0; i < drops.length; i++) {
+                // 随机选取 0 或 1
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                
+                // 绘制文字
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // 如果文字超出屏幕底部，随机重置到顶部
+                // 添加随机性使得下落看起来更自然
+                if (drops[i] * fontSize > height && Math.random() > 0.98) {
+                    drops[i] = 0;
+                }
+
+                // Y坐标递增
+                drops[i]++;
+            }
+            // 重置阴影，避免影响蒙版绘制
+            ctx.shadowBlur = 0;
+        }
+
+        // 动画循环 (约30帧/秒)
+        setInterval(drawMatrix, 33);
+
+        // 窗口大小改变时重置 Canvas
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            // 重新计算列数并扩展 drops 数组
+            const newColumns = Math.ceil(width / fontSize);
+            if (newColumns > columns) {
+                 for (let i = columns; i < newColumns; i++) {
+                    drops[i] = Math.random() * -100;
+                }
+            }
+            columns = newColumns;
+        });
+    </script>
+</body>
+</html>
