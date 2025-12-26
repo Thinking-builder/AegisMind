@@ -1,0 +1,37 @@
+title: RDP tunneling via ngrok detected
+description: Detects scenarios where an attacker uses RDP tunneling to redirect traffic to a C&C target.
+references:
+- https://twitter.com/malmoeb/status/1519710302820089857
+- https://twitter.com/Purp1eW0lf/status/1624073100420677633
+- https://www.mandiant.com/resources/blog/bypassing-network-restrictions-through-rdp-tunneling
+- https://www.huntress.com/blog/abusing-ngrok-hackers-at-the-end-of-the-tunnel
+- https://www.logpoint.com/en/blog/a-deep-look-at-the-darkside-ransomware-operators-and-their-affiliates/#
+- https://www.mandiant.com/resources/blog/sim-swapping-abuse-azure-serial
+tags:
+- attack.command_and_control
+- attack.t1572 # Protocol Tunneling 
+- attack.lateral_movement
+- attack.t1021.001 # Remote Services: Remote Desktop Protocol 
+author: mdecrevoisier
+status: experimental
+logsource:
+  product: windows
+  category: rdp
+detection: # suspicious paramter in the IP field should be : "::%16777216"
+  selection1:
+    EventID: 
+      - 21 # session logon succeeded
+      - 24 # session has been disconnected
+      - 25 # session reconnection successed
+    Channel: Microsoft-Windows-TerminalServices-LocalSessionManager/Operational
+    EventXML.Address|startswith: '::%' # IP address is provided in "EventXML.Address"
+
+  selection2:
+    EventID: 1149 # 'User authentication succeeded': DOES NOT indicate a successful user authentication !!!
+    Channel: Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational
+    EventXML.Param3|startswith: '::%' # IP address is provided in "EventXML.Param3"
+
+  condition: selection1 or selection2
+falsepositives:
+- Nested RDP session on the same host using ::1 as destination IP
+level: high
