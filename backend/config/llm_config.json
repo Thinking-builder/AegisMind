@@ -1,0 +1,9 @@
+{
+  "api_key": "bb3cd712abe94537b4104a7f66e0a0f8.H4KgamsQ5USCWPRc",
+  "base_url": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+  "model": "glm-4",
+  "timeout": 60,
+  "extra_params": {
+    "enable_internet": false
+  }
+}

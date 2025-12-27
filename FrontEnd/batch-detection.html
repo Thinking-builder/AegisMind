@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>批量检测 - 恶意程序检测系统</title>
+    <title>批量检测 - 恶意文件检测平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -21,32 +21,10 @@
         }
     </script>
     <style>
-        body {
-            background-color: #0f172a;
-            color: #e2e8f0;
-            font-family: 'Inter', sans-serif;
-            position: relative;
-        }
-        #matrixCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.3;
-            mix-blend-mode: screen;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-        }
-        .table-row-hover:hover {
-            background: rgba(56, 189, 248, 0.05);
-        }
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; position: relative; }
+        #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.3; mix-blend-mode: screen; }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); }
+        .table-row-hover:hover { background: rgba(56, 189, 248, 0.05); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative">
@@ -66,32 +44,32 @@
     </nav>
 
     <main class="flex-1 p-6 container mx-auto max-w-7xl relative z-10">
-        
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="glass-panel rounded-2xl p-6 md:col-span-1 relative group">
                 <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
                 <h3 class="font-semibold mb-3">1. 上传样本集</h3>
                 <div class="border-2 border-dashed border-gray-600 rounded-xl p-4 text-center hover:bg-purple-500/5 hover:border-purple-500 transition cursor-pointer h-32 flex flex-col justify-center items-center">
-                    <input type="file" multiple id="batchInput" class="hidden" onchange="handleBatchSelect(this)">
+                    <input type="file" multiple id="batchInput" class="hidden">
                     <label for="batchInput" class="cursor-pointer w-full h-full flex flex-col justify-center items-center">
                         <i class="fa-solid fa-folder-open text-2xl text-purple-400 mb-2"></i>
-                        <span class="text-sm text-gray-300">选择文件夹或多个文件</span>
+                        <span class="text-sm text-gray-300">选择多个文件</span>
                         <span id="fileCount" class="text-xs text-gray-500 mt-1">未选择文件</span>
                     </label>
                 </div>
+                <p id="batchError" class="text-sm text-red-400 mt-2 hidden"></p>
             </div>
 
             <div class="glass-panel rounded-2xl p-6 md:col-span-1 relative">
                 <div class="absolute top-0 left-0 w-1 h-full bg-pink-500"></div>
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="font-semibold">2. Ground Truth (可选)</h3>
-                    <i class="fa-solid fa-circle-question text-gray-500 text-xs"></i>
+                    <i class="fa-solid fa-circle-question text-gray-500 text-xs" title="CSV/JSON：包含文件名与标签(0/1)"></i>
                 </div>
                 <div class="border-2 border-dashed border-gray-600 rounded-xl p-4 text-center hover:bg-pink-500/5 hover:border-pink-500 transition cursor-pointer h-32 flex flex-col justify-center items-center">
-                    <input type="file" id="gtInput" class="hidden" onchange="handleGTSelect(this)">
+                    <input type="file" id="gtInput" class="hidden">
                     <label for="gtInput" class="cursor-pointer w-full h-full flex flex-col justify-center items-center">
                         <i class="fa-solid fa-table text-2xl text-pink-400 mb-2"></i>
-                        <span class="text-sm text-gray-300">上传 CSV/JSON 标签</span>
+                        <span class="text-sm text-gray-300">上传 CSV/JSON 标注</span>
                         <span id="gtStatus" class="text-xs text-gray-500 mt-1">未上传</span>
                     </label>
                 </div>
@@ -100,21 +78,20 @@
             <div class="glass-panel rounded-2xl p-6 md:col-span-1 flex flex-col justify-between">
                 <div>
                     <h3 class="font-semibold mb-2">3. 执行分析</h3>
-                    <p class="text-xs text-gray-400 mb-4">系统将自动识别类型，您可在此确认模块状态：</p>
-                    
+                    <p class="text-xs text-gray-400 mb-4">系统按类型自动匹配模块，也可手动切换。</p>
                     <div class="flex gap-2">
-                         <div id="batchStatic" onclick="toggleBatchModule('batchStatic')" data-selected="true" class="flex-1 p-2 bg-gray-800 rounded text-center text-xs border border-gray-600 cursor-pointer hover:border-purple-400 transition">
+                        <div id="batchStatic" data-selected="true" class="flex-1 p-2 bg-purple-600/20 text-purple-300 border border-purple-500 rounded text-center text-xs cursor-pointer hover:border-purple-400 transition">
                             <i class="fa-solid fa-code mb-1 block"></i> 静态
-                         </div>
-                         <div id="batchAI" onclick="toggleBatchModule('batchAI')" data-selected="true" class="flex-1 p-2 bg-gray-800 rounded text-center text-xs border border-gray-600 cursor-pointer hover:border-purple-400 transition">
+                        </div>
+                        <div id="batchAI" data-selected="true" class="flex-1 p-2 bg-purple-600/20 text-purple-300 border border-purple-500 rounded text-center text-xs cursor-pointer hover:border-purple-400 transition">
                             <i class="fa-solid fa-brain mb-1 block"></i> AI
-                         </div>
-                         <div id="batchDynamic" onclick="toggleBatchModule('batchDynamic')" data-selected="true" class="flex-1 p-2 bg-gray-800 rounded text-center text-xs border border-gray-600 cursor-pointer hover:border-purple-400 transition">
+                        </div>
+                        <div id="batchDynamic" data-selected="true" class="flex-1 p-2 bg-purple-600/20 text-purple-300 border border-purple-500 rounded text-center text-xs cursor-pointer hover:border-purple-400 transition">
                             <i class="fa-solid fa-running mb-1 block"></i> 动态
-                         </div>
+                        </div>
                     </div>
                 </div>
-                <button id="batchStartBtn" onclick="startBatchAnalysis()" disabled class="w-full py-3 rounded-lg font-bold bg-gray-700 text-gray-500 cursor-not-allowed transition shadow-lg flex items-center justify-center gap-2 mt-4">
+                <button id="batchStartBtn" disabled class="w-full py-3 rounded-lg font-bold bg-gray-700 text-gray-500 cursor-not-allowed transition shadow-lg flex items-center justify-center gap-2 mt-4">
                     <i class="fa-solid fa-bolt"></i> 开始批量处理
                 </button>
             </div>
@@ -122,7 +99,7 @@
 
         <div id="progressSection" class="hidden mb-8">
             <div class="flex justify-between text-sm text-gray-400 mb-2">
-                <span>正在处理... <span id="currentProcessFile">sample_42.exe</span></span>
+                <span>正在处理... <span id="currentProcessFile"></span></span>
                 <span id="progressPercent">0%</span>
             </div>
             <div class="w-full bg-gray-800 rounded-full h-2.5 overflow-hidden">
@@ -133,19 +110,19 @@
         <div id="metricsDashboard" class="hidden grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div class="glass-panel p-4 rounded-xl text-center border-b-4 border-green-500">
                 <p class="text-gray-400 text-xs uppercase">Accuracy</p>
-                <p class="text-3xl font-bold text-white">94.2%</p>
+                <p id="m-acc" class="text-3xl font-bold text-white">-</p>
             </div>
             <div class="glass-panel p-4 rounded-xl text-center border-b-4 border-yellow-500">
                 <p class="text-gray-400 text-xs uppercase">Precision</p>
-                <p class="text-3xl font-bold text-white">91.5%</p>
+                <p id="m-prec" class="text-3xl font-bold text-white">-</p>
             </div>
             <div class="glass-panel p-4 rounded-xl text-center border-b-4 border-red-500">
-                <p class="text-gray-400 text-xs uppercase">漏报率 (FNR)</p>
-                <p class="text-3xl font-bold text-white">3.1%</p>
+                <p class="text-gray-400 text-xs uppercase">漏报率(FNR)</p>
+                <p id="m-fnr" class="text-3xl font-bold text-white">-</p>
             </div>
             <div class="glass-panel p-4 rounded-xl text-center border-b-4 border-orange-500">
-                <p class="text-gray-400 text-xs uppercase">错报率 (FPR)</p>
-                <p class="text-3xl font-bold text-white">5.8%</p>
+                <p class="text-gray-400 text-xs uppercase">错报率(FPR)</p>
+                <p id="m-fpr" class="text-3xl font-bold text-white">-</p>
             </div>
         </div>
 
@@ -153,11 +130,8 @@
             <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-900/40">
                 <h3 class="font-semibold"><i class="fa-solid fa-list-check mr-2"></i>检测结果列表</h3>
                 <div class="flex gap-2">
-                    <button class="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded transition">
-                        <i class="fa-solid fa-filter mr-1"></i> 筛选错误
-                    </button>
-                    <button class="text-xs bg-purple-600/30 text-purple-300 border border-purple-500/30 hover:bg-purple-600/50 px-3 py-1.5 rounded transition">
-                        <i class="fa-solid fa-file-csv mr-1"></i> 导出 CSV
+                    <button id="exportJson" class="text-xs bg-purple-600/30 text-purple-300 border border-purple-500/30 hover:bg-purple-600/50 px-3 py-1.5 rounded transition" disabled>
+                        <i class="fa-solid fa-file-code mr-1"></i> 导出 JSON
                     </button>
                 </div>
             </div>
@@ -169,14 +143,13 @@
                             <th class="px-6 py-3">文件名</th>
                             <th class="px-6 py-3">类型</th>
                             <th class="px-6 py-3">检测结果</th>
-                            <th class="px-6 py-3">GT 标签</th>
-                            <th class="px-6 py-3">状态</th>
-                            <th class="px-6 py-3">详情</th>
+                            <th class="px-6 py-3">模块状态</th>
+                            <th class="px-6 py-3">标签(GT)</th>
                         </tr>
                     </thead>
                     <tbody id="resultTableBody" class="divide-y divide-gray-700">
                         <tr id="tableEmpty">
-                            <td colspan="6" class="px-6 py-20 text-center text-gray-500">
+                            <td colspan="5" class="px-6 py-20 text-center text-gray-500">
                                 请上传文件并开始分析以查看结果
                             </td>
                         </tr>
@@ -184,113 +157,166 @@
                 </table>
             </div>
         </div>
-
     </main>
 
     <script>
-        let hasGT = false;
-        
-        function handleBatchSelect(input) {
-            const count = input.files.length;
-            document.getElementById('fileCount').innerText = `已选择 ${count} 个文件`;
-            document.getElementById('fileCount').classList.add('text-purple-400');
-            
-            const btn = document.getElementById('batchStartBtn');
-            btn.disabled = false;
-            btn.className = "w-full py-3 rounded-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white cursor-pointer transition shadow-[0_0_15px_rgba(192,132,252,0.4)] hover:scale-[1.02] flex items-center justify-center gap-2 mt-4";
+        const API_BASE = (() => {
+            const qs = new URLSearchParams(window.location.search);
+            if (qs.get("api")) return qs.get("api");
+            const url = new URL(window.location.href);
+            if (url.protocol.startsWith("file")) return "http://localhost:8001";
+            if (url.port === "8000") return `${url.protocol}//${url.hostname}:8001`;
+            return `${url.protocol}//${url.host}`;
+        })();
 
-            // Update mini indicators visually
-            updateBatchModule('batchStatic', true);
-            updateBatchModule('batchAI', true);
-            updateBatchModule('batchDynamic', true);
+        const batchInput = document.getElementById('batchInput');
+        const gtInput = document.getElementById('gtInput');
+        const startBtn = document.getElementById('batchStartBtn');
+        const fileCount = document.getElementById('fileCount');
+        const gtStatus = document.getElementById('gtStatus');
+        const progressSection = document.getElementById('progressSection');
+        const progressBar = document.getElementById('progressBar');
+        const progressPercent = document.getElementById('progressPercent');
+        const currentProcessFile = document.getElementById('currentProcessFile');
+        const metricsDashboard = document.getElementById('metricsDashboard');
+        const tableBody = document.getElementById('resultTableBody');
+        const exportBtn = document.getElementById('exportJson');
+        const batchError = document.getElementById('batchError');
+
+        let selectedFiles = [];
+        let gtFile = null;
+        let lastBatchResult = null;
+
+        function updateStartBtn() {
+            startBtn.disabled = selectedFiles.length === 0;
+            startBtn.className = selectedFiles.length
+                ? 'w-full py-3 rounded-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white cursor-pointer transition shadow-[0_0_15px_rgba(192,132,252,0.4)] hover:scale-[1.02] flex items-center justify-center gap-2 mt-4'
+                : 'w-full py-3 rounded-lg font-bold bg-gray-700 text-gray-500 cursor-not-allowed transition shadow-lg flex items-center justify-center gap-2 mt-4';
         }
 
-        function handleGTSelect(input) {
-            document.getElementById('gtStatus').innerText = input.files[0].name;
-            document.getElementById('gtStatus').classList.add('text-pink-400');
-            hasGT = true;
-        }
+        batchInput.addEventListener('change', e => {
+            selectedFiles = Array.from(e.target.files);
+            fileCount.innerText = selectedFiles.length ? `已选择 ${selectedFiles.length} 个文件` : '未选择文件';
+            fileCount.classList.toggle('text-purple-400', selectedFiles.length > 0);
+            updateStartBtn();
+        });
+
+        gtInput.addEventListener('change', e => {
+            gtFile = e.target.files[0];
+            if (gtFile) {
+                gtStatus.innerText = gtFile.name;
+                gtStatus.classList.add('text-pink-400');
+            } else {
+                gtStatus.innerText = '未上传';
+                gtStatus.classList.remove('text-pink-400');
+            }
+        });
 
         function toggleBatchModule(id) {
             const el = document.getElementById(id);
-            const isSelected = el.getAttribute('data-selected') === 'true';
-            updateBatchModule(id, !isSelected);
+            const selected = el.dataset.selected === 'true';
+            el.dataset.selected = (!selected).toString();
+            el.classList.toggle('bg-purple-600/20', !selected);
+            el.classList.toggle('text-purple-300', !selected);
+            el.classList.toggle('border-purple-500', !selected);
+            el.classList.toggle('bg-gray-800', selected);
+            el.classList.toggle('text-gray-500', selected);
+            el.classList.toggle('border-gray-600', selected);
         }
+        ['batchStatic','batchAI','batchDynamic'].forEach(id => document.getElementById(id).addEventListener('click', () => toggleBatchModule(id)));
 
-        function updateBatchModule(id, isSelected) {
-            const el = document.getElementById(id);
-            el.setAttribute('data-selected', isSelected.toString());
-            if (isSelected) {
-                el.classList.add('bg-purple-600/20', 'text-purple-300', 'border-purple-500');
-                el.classList.remove('bg-gray-800', 'text-gray-500', 'border-gray-600');
-            } else {
-                el.classList.remove('bg-purple-600/20', 'text-purple-300', 'border-purple-500');
-                el.classList.add('bg-gray-800', 'text-gray-500', 'border-gray-600');
+        async function startBatchAnalysis() {
+            if (!selectedFiles.length) return;
+            batchError.classList.add('hidden');
+            progressSection.classList.remove('hidden');
+            progressBar.style.width = '30%';
+            progressPercent.innerText = '30%';
+            currentProcessFile.innerText = '';
+            metricsDashboard.classList.add('hidden');
+            tableBody.innerHTML = '<tr id="tableEmpty"><td colspan="5" class="px-6 py-6 text-center text-gray-500">正在分析...</td></tr>';
+
+            const form = new FormData();
+            selectedFiles.forEach(f => form.append('files', f));
+            const modules = [];
+            if (document.getElementById('batchStatic').dataset.selected === 'true') modules.push('static');
+            if (document.getElementById('batchAI').dataset.selected === 'true') modules.push('ai');
+            if (document.getElementById('batchDynamic').dataset.selected === 'true') modules.push('dynamic');
+            form.append('modules', JSON.stringify(modules));
+            if (gtFile) form.append('ground_truth', gtFile);
+
+            try {
+                const resp = await fetch(`${API_BASE}/api/detection/batch`, { method: 'POST', body: form });
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.detail || '批量检测失败');
+                lastBatchResult = data.data.result;
+                renderBatchResult(lastBatchResult, data.data.summary.errors || []);
+                exportBtn.disabled = false;
+                progressBar.style.width = '100%';
+                progressPercent.innerText = '100%';
+            } catch (err) {
+                batchError.innerText = `执行失败：${err}`;
+                batchError.classList.remove('hidden');
+                tableBody.innerHTML = '<tr id="tableEmpty"><td colspan="5" class="px-6 py-6 text-center text-gray-500">任务未完成</td></tr>';
+            } finally {
+                setTimeout(() => progressSection.classList.add('hidden'), 400);
             }
         }
 
-        function startBatchAnalysis() {
-            document.getElementById('progressSection').classList.remove('hidden');
-            const bar = document.getElementById('progressBar');
-            const percent = document.getElementById('progressPercent');
-            
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    finishAnalysis();
-                } else {
-                    width++;
-                    bar.style.width = width + '%';
-                    percent.innerText = width + '%';
-                }
-            }, 30);
-        }
+        function renderBatchResult(result, errors) {
+            tableBody.innerHTML = '';
+            result.results.forEach((row, idx) => {
+                currentProcessFile.innerText = row.filename;
+                const percent = Math.round(((idx + 1) / result.results.length) * 100);
+                progressBar.style.width = percent + '%';
+                progressPercent.innerText = percent + '%';
 
-        function finishAnalysis() {
-            document.getElementById('progressSection').classList.add('hidden');
-            if(hasGT) document.getElementById('metricsDashboard').classList.remove('hidden');
-            
-            const tbody = document.getElementById('resultTableBody');
-            document.getElementById('tableEmpty').style.display = 'none';
-            
-            // Check selections
-            const useAI = document.getElementById('batchAI').getAttribute('data-selected') === 'true';
-            const useStatic = document.getElementById('batchStatic').getAttribute('data-selected') === 'true';
+                const verdictColor = row.verdict === 'malicious' ? 'text-red-400' : 'text-green-400';
+                const modules = Object.entries(row.results)
+                    .map(([k, v]) => `${k}:${v.is_malicious === null ? '-' : (v.is_malicious ? '恶意' : '良性')}`)
+                    .join(' | ');
+                const tag = result.metrics
+                    ? (result.metrics.false_positives?.includes(row.filename) ? '错报' : result.metrics.false_negatives?.includes(row.filename) ? '漏报' : '正确')
+                    : '-';
 
-            // Mock Data Generation
-            const mockData = [
-                { name: 'invoice_scan.exe', type: 'PE', result: 'Malicious', gt: 1, engine: (useAI && useStatic) ? 'AI, Static' : 'Skipped' },
-                { name: 'system_log.evtx', type: 'EVTX', result: 'Benign', gt: 0, engine: 'Dynamic' },
-                { name: 'powershell_script.ps1', type: 'Script', result: 'Malicious', gt: 1, engine: 'Static' },
-                { name: 'calc.exe', type: 'PE', result: 'Benign', gt: 0, engine: 'AI' },
-                { name: 'unknown_sample.dll', type: 'PE', result: 'Benign', gt: 1, engine: 'AI' },
-            ];
-
-            tbody.innerHTML = mockData.map(row => {
-                const isCorrect = hasGT ? ((row.result === 'Malicious' ? 1 : 0) === row.gt) : true;
-                const statusBadge = hasGT 
-                    ? (isCorrect 
-                        ? '<span class="px-2 py-0.5 rounded bg-green-500/20 text-green-400 text-xs border border-green-500/30">正确</span>'
-                        : '<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-xs border border-red-500/30 font-bold">错误</span>')
-                    : '<span class="text-gray-500">-</span>';
-
-                const resultColor = row.result === 'Malicious' ? 'text-red-400' : 'text-green-400';
-
-                return `
-                <tr class="table-row-hover transition ${hasGT && !isCorrect ? 'bg-red-500/5' : ''}">
-                    <td class="px-6 py-4 font-medium text-white">${row.name}</td>
-                    <td class="px-6 py-4"><span class="bg-gray-700 px-2 py-1 rounded text-xs">${row.type}</span></td>
-                    <td class="px-6 py-4 ${resultColor} font-semibold">${row.result === 'Malicious' ? '<i class="fa-solid fa-bug mr-1"></i> 恶意' : '<i class="fa-solid fa-shield mr-1"></i> 良性'}</td>
-                    <td class="px-6 py-4">${hasGT ? (row.gt ? '恶意' : '良性') : '-'}</td>
-                    <td class="px-6 py-4">${statusBadge}</td>
-                    <td class="px-6 py-4 text-xs text-gray-500">${row.engine}</td>
-                </tr>
+                tableBody.innerHTML += `
+                    <tr class="table-row-hover transition ${row.verdict === 'malicious' ? 'bg-red-500/5' : ''}">
+                        <td class="px-6 py-4 font-medium text-white">${row.filename}</td>
+                        <td class="px-6 py-4"><span class="bg-gray-700 px-2 py-1 rounded text-xs">${row.file_type}</span></td>
+                        <td class="px-6 py-4 ${verdictColor} font-semibold">${row.verdict === 'malicious' ? '<i class="fa-solid fa-bug mr-1"></i> 恶意' : '<i class="fa-solid fa-shield mr-1"></i> 良性'}</td>
+                        <td class="px-6 py-4 text-xs text-gray-400">${modules}</td>
+                        <td class="px-6 py-4 text-xs text-gray-400">${tag}</td>
+                    </tr>
                 `;
-            }).join('');
+            });
+            if (errors.length) {
+                errors.forEach(err => {
+                    tableBody.innerHTML += `<tr class="bg-red-500/10 text-red-200"><td colspan="5" class="px-6 py-3">保存失败：${err}</td></tr>`;
+                });
+            }
+            if (result.metrics && (result.metrics.accuracy !== null)) {
+                metricsDashboard.classList.remove('hidden');
+                document.getElementById('m-acc').innerText = (result.metrics.accuracy * 100).toFixed(1) + '%';
+                document.getElementById('m-prec').innerText = (result.metrics.precision * 100).toFixed(1) + '%';
+                document.getElementById('m-fnr').innerText = (result.metrics.false_negative_rate * 100).toFixed(1) + '%';
+                document.getElementById('m-fpr').innerText = (result.metrics.false_positive_rate * 100).toFixed(1) + '%';
+            }
         }
 
-        // Matrix Rain (Same as others)
+        startBtn.addEventListener('click', startBatchAnalysis);
+        exportBtn.addEventListener('click', () => {
+            if (!lastBatchResult) return;
+            const blob = new Blob([JSON.stringify(lastBatchResult, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'batch_result.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        updateStartBtn();
+
+        // Matrix Rain
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
         let width = canvas.width = window.innerWidth;

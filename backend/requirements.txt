@@ -1,0 +1,8 @@
+fastapi==0.110.0
+uvicorn==0.24.0.post1
+python-multipart==0.0.9
+yara-python==4.3.1
+pyyaml==6.0.1
+python-evtx==0.6.1
+httpx==0.26.0
+torch==2.1.2

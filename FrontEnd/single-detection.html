@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>单样本检测 - 恶意程序检测系统</title>
+    <title>单样本检测 - 恶意文件检测平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -22,47 +22,19 @@
         }
     </script>
     <style>
-        body {
-            background-color: #0f172a;
-            color: #e2e8f0;
-            font-family: 'Inter', sans-serif;
-            position: relative;
-        }
-        /* Matrix Canvas 样式 */
-        #matrixCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.3;
-            mix-blend-mode: screen;
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-        }
-        /* Custom Scrollbar */
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; position: relative; }
+        #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.3; mix-blend-mode: screen; }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
-        
-        /* Markdown Styles */
-        .markdown-body h1, .markdown-body h2 { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3em; margin-top: 1.5em; color: #38bdf8; }
+        .markdown-body h1, .markdown-body h2 { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.3em; margin-top: 1.2em; color: #38bdf8; }
         .markdown-body p { margin-bottom: 1em; line-height: 1.6; }
         .markdown-body ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
         .markdown-body code { background: rgba(255,255,255,0.1); padding: 0.2em 0.4em; border-radius: 3px; color: #f472b6; font-family: monospace; }
         .markdown-body pre { background: #1e293b; padding: 1em; border-radius: 8px; overflow-x: auto; margin-bottom: 1em; }
-        
-        /* 交互反馈样式 */
         .module-card { transition: all 0.2s ease-in-out; }
-        .module-card:active { transform: scale(0.98); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative">
@@ -82,38 +54,37 @@
     </nav>
 
     <main class="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-[1600px] mx-auto w-full relative z-10">
-        
         <div class="lg:col-span-4 space-y-6">
-            
             <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group">
                 <div class="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
-                <h3 class="text-lg font-semibold mb-4 flex items-center">
-                    <i class="fa-solid fa-cloud-arrow-up mr-2 text-cyan-400"></i> 文件上传
+                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-cyan-400"></i> 上传样本
                 </h3>
                 
                 <div id="dropZone" class="border-2 border-dashed border-gray-600 rounded-xl p-8 text-center transition-all duration-300 hover:border-cyan-500 hover:bg-cyan-500/5 cursor-pointer relative">
-                    <input type="file" id="fileInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleFileSelect(this)">
+                    <input type="file" id="fileInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                     <div id="uploadPlaceholder">
                         <i class="fa-solid fa-file-shield text-4xl text-gray-500 mb-3 group-hover:scale-110 transition-transform"></i>
-                        <p class="text-gray-300 font-medium">拖拽文件到此处</p>
-                        <p class="text-gray-500 text-xs mt-1">支持 PE (.exe, .dll) 或 EVTX 文件</p>
+                        <p class="text-gray-300 font-medium">拖拽文件到此处或点击选择</p>
+                        <p class="text-gray-500 text-xs mt-1">支持 PE (.exe/.dll) 与 EVTX</p>
                     </div>
                     <div id="fileInfo" class="hidden">
                         <i class="fa-solid fa-file-code text-4xl text-cyan-400 mb-3"></i>
-                        <p id="fileName" class="text-white font-medium truncate">example.exe</p>
-                        <p id="fileSize" class="text-gray-500 text-xs">2.4 MB</p>
-                        <button onclick="resetUpload(event)" class="mt-3 text-xs text-red-400 hover:text-red-300 underline">移除文件</button>
+                        <p id="fileName" class="text-white font-medium truncate"></p>
+                        <p id="fileSize" class="text-gray-500 text-xs"></p>
+                        <p id="fileType" class="text-gray-400 text-xs mt-1"></p>
+                        <button id="removeBtn" class="mt-3 text-xs text-red-400 hover:text-red-300 underline">移除文件</button>
                     </div>
                 </div>
+                <p id="uploadError" class="text-sm text-red-400 mt-3 hidden"></p>
             </div>
 
             <div class="glass-panel rounded-2xl p-6">
                 <h3 class="text-lg font-semibold mb-4">检测模块配置</h3>
-                <p class="text-xs text-gray-500 mb-3">点击已激活的模块可切换开启/关闭</p>
+                <p class="text-xs text-gray-500 mb-3">根据文件类型自动启用可用模块，你也可以手动勾选。</p>
                 
                 <div class="space-y-3">
-                    <div id="moduleStatic" onclick="toggleModule('moduleStatic')" data-enabled="false" data-selected="false"
-                         class="module-card flex items-center justify-between p-3 rounded-lg bg-gray-800/50 border border-gray-700 opacity-30 cursor-not-allowed transition-all duration-300 select-none">
+                    <div id="moduleStatic" data-enabled="false" data-selected="false" class="module-card flex items-center justify-between p-3 rounded-lg bg-gray-800/50 border border-gray-700 opacity-30 cursor-not-allowed">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded bg-gray-700 flex items-center justify-center icon-bg transition-colors">
                                 <i class="fa-solid fa-code text-gray-400 icon transition-colors"></i>
@@ -126,22 +97,20 @@
                         <i class="fa-regular fa-circle text-gray-600 status-icon text-lg transition-transform duration-300"></i>
                     </div>
 
-                    <div id="moduleAI" onclick="toggleModule('moduleAI')" data-enabled="false" data-selected="false"
-                         class="module-card flex items-center justify-between p-3 rounded-lg bg-gray-800/50 border border-gray-700 opacity-30 cursor-not-allowed transition-all duration-300 select-none">
+                    <div id="moduleAI" data-enabled="false" data-selected="false" class="module-card flex items-center justify-between p-3 rounded-lg bg-gray-800/50 border border-gray-700 opacity-30 cursor-not-allowed">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded bg-gray-700 flex items-center justify-center icon-bg transition-colors">
                                 <i class="fa-solid fa-brain text-gray-400 icon transition-colors"></i>
                             </div>
                             <div>
                                 <h4 class="font-medium text-sm text-gray-300 module-title">人工智能检测</h4>
-                                <p class="text-xs text-gray-500">机器学习模型</p>
+                                <p class="text-xs text-gray-500">MalConv 概率判定</p>
                             </div>
                         </div>
                         <i class="fa-regular fa-circle text-gray-600 status-icon text-lg transition-transform duration-300"></i>
                     </div>
 
-                    <div id="moduleDynamic" onclick="toggleModule('moduleDynamic')" data-enabled="false" data-selected="false"
-                         class="module-card flex items-center justify-between p-3 rounded-lg bg-gray-800/50 border border-gray-700 opacity-30 cursor-not-allowed transition-all duration-300 select-none">
+                    <div id="moduleDynamic" data-enabled="false" data-selected="false" class="module-card flex items-center justify-between p-3 rounded-lg bg-gray-800/50 border border-gray-700 opacity-30 cursor-not-allowed">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded bg-gray-700 flex items-center justify-center icon-bg transition-colors">
                                 <i class="fa-solid fa-running text-gray-400 icon transition-colors"></i>
@@ -169,27 +138,23 @@
                     </label>
                 </div>
                 <p class="text-xs text-gray-400 bg-gray-800/50 p-2 rounded">
-                    <i class="fa-solid fa-circle-info mr-1"></i> 启用后，大模型将访问最新的威胁情报数据库以丰富分析报告。
+                    <i class="fa-solid fa-circle-info mr-1"></i> 开启后，报告会提示模型可联网检索威胁情报。请在后端 config/llm_config.json 填写 GLM API 信息。
                 </p>
             </div>
 
-            <button id="analyzeBtn" onclick="startAnalysis()" disabled class="w-full py-4 rounded-xl font-bold text-lg bg-gray-700 text-gray-400 cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg">
+            <button id="analyzeBtn" disabled class="w-full py-4 rounded-xl font-bold text-lg bg-gray-700 text-gray-400 cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg">
                 <i class="fa-solid fa-play"></i> 开始分析
             </button>
-
         </div>
 
         <div class="lg:col-span-8 flex flex-col h-full">
             <div class="glass-panel rounded-2xl flex-1 p-0 flex flex-col overflow-hidden relative min-h-[600px]">
                 <div class="p-6 border-b border-gray-700 bg-gray-900/40 flex justify-between items-center">
-                    <h2 class="text-xl font-bold flex items-center">
-                        <i class="fa-solid fa-file-medical-alt mr-2 text-purple-400"></i> 分析报告
+                    <h2 class="text-xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-file-medical-alt text-purple-400"></i> 分析报告
                     </h2>
                     <div class="flex gap-2">
-                        <button class="px-3 py-1.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-sm transition text-gray-300">
-                            <i class="fa-regular fa-eye mr-1"></i> 预览
-                        </button>
-                        <button class="px-3 py-1.5 rounded-lg bg-cyan-600/20 text-cyan-400 hover:bg-cyan-600/40 border border-cyan-500/30 text-sm transition">
+                        <button id="downloadBtn" class="px-3 py-1.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-sm transition text-gray-300" disabled>
                             <i class="fa-solid fa-download mr-1"></i> 下载报告
                         </button>
                     </div>
@@ -207,251 +172,267 @@
                         <div class="absolute inset-0 border-t-4 border-cyan-500 border-solid rounded-full animate-spin"></div>
                         <div class="absolute inset-2 border-t-4 border-purple-500 border-solid rounded-full animate-spin" style="animation-direction: reverse;"></div>
                     </div>
-                    <p class="mt-6 text-cyan-400 font-mono text-lg animate-pulse">正在进行多维威胁检测...</p>
-                    <div class="mt-2 text-sm text-gray-400 space-y-1 text-center">
-                        <p id="loadingStep1" class="transition-opacity opacity-50">正在加载 YARA 规则...</p>
-                        <p id="loadingStep2" class="transition-opacity opacity-0">AI 模型推理中...</p>
-                        <p id="loadingStep3" class="transition-opacity opacity-0">生成威胁情报报告...</p>
-                    </div>
+                    <p class="mt-6 text-cyan-400 font-mono text-lg animate-pulse">正在执行多引擎检测...</p>
+                    <div class="mt-2 text-sm text-gray-400 space-y-1 text-center" id="loadingSteps"></div>
                 </div>
 
-                <div id="reportContent" class="hidden flex-1 overflow-y-auto p-8 bg-gray-900/20 markdown-body text-gray-300 text-sm">
-                    </div>
+                <div id="reportContent" class="hidden flex-1 overflow-y-auto p-8 bg-gray-900/20 markdown-body text-gray-300 text-sm"></div>
             </div>
         </div>
-
     </main>
 
     <script>
-        let currentFileType = null;
+        const API_BASE = (() => {
+            const qs = new URLSearchParams(window.location.search);
+            if (qs.get("api")) return qs.get("api");
+            const url = new URL(window.location.href);
+            if (url.protocol.startsWith("file")) return "http://localhost:8001";
+            if (url.port === "8000") return `${url.protocol}//${url.hostname}:8001`;
+            return `${url.protocol}//${url.host}`;
+        })();
 
-        function handleFileSelect(input) {
-            const file = input.files[0];
-            if (!file) return;
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const reportEmpty = document.getElementById('reportEmpty');
+        const reportLoading = document.getElementById('reportLoading');
+        const reportContent = document.getElementById('reportContent');
+        const uploadError = document.getElementById('uploadError');
 
-            // UI Update
-            document.getElementById('uploadPlaceholder').classList.add('hidden');
-            document.getElementById('fileInfo').classList.remove('hidden');
-            document.getElementById('fileName').innerText = file.name;
-            document.getElementById('fileSize').innerText = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+        let currentFileMeta = null;
+        let lastReportMarkdown = '';
 
-            // Identify Type & Activate Modules
-            const ext = file.name.split('.').pop().toLowerCase();
-            resetModules(); // First disable all
+        const moduleThemes = {
+            moduleStatic: { bg: 'bg-cyan-500/20', text: 'text-cyan-400', border: 'border-cyan-500/50' },
+            moduleAI: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/50' },
+            moduleDynamic: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/50' },
+        };
 
-            if (ext === 'evtx') {
-                currentFileType = 'evtx';
-                activateModule('moduleDynamic', 'bg-purple-500/20', 'text-purple-400', 'border-purple-500/50');
+        function applyModuleStyle(el, enabled, selected, theme) {
+            el.dataset.enabled = enabled ? 'true' : 'false';
+            el.dataset.selected = selected ? 'true' : 'false';
+            el.classList.remove('opacity-30', 'opacity-60', 'cursor-not-allowed', 'border-gray-700', 'border-gray-600');
+            el.classList.remove(theme.border);
+            if (!enabled) {
+                el.classList.add('opacity-30', 'cursor-not-allowed', 'border-gray-700');
+            } else if (selected) {
+                el.classList.add('opacity-100', 'cursor-pointer', theme.border);
             } else {
-                currentFileType = 'pe';
-                activateModule('moduleStatic', 'bg-cyan-500/20', 'text-cyan-400', 'border-cyan-500/50');
-                activateModule('moduleAI', 'bg-blue-500/20', 'text-blue-400', 'border-blue-500/50');
+                el.classList.add('opacity-60', 'cursor-pointer', 'border-gray-600');
             }
 
-            checkAnalyzeButton();
-        }
+            const iconBg = el.querySelector('.icon-bg');
+            const icon = el.querySelector('.icon');
+            const title = el.querySelector('.module-title');
+            const statusIcon = el.querySelector('.status-icon');
+            iconBg.className = 'w-8 h-8 rounded bg-gray-700 flex items-center justify-center icon-bg transition-colors';
+            icon.className = icon.className.split(' ')[0] + ' ' + icon.className.split(' ')[1] + ' text-gray-400 icon transition-colors';
+            title.classList.remove('text-white');
 
-        function resetUpload(e) {
-            e.stopPropagation();
-            document.getElementById('fileInput').value = '';
-            document.getElementById('uploadPlaceholder').classList.remove('hidden');
-            document.getElementById('fileInfo').classList.add('hidden');
-            resetModules();
-            checkAnalyzeButton();
+            if (enabled && selected) {
+                iconBg.classList.add(theme.bg);
+                icon.classList.remove('text-gray-400');
+                icon.classList.add(theme.text);
+                title.classList.add('text-white');
+                statusIcon.className = `fa-solid fa-circle-check ${theme.text} status-icon text-lg`;
+            } else if (enabled) {
+                statusIcon.className = 'fa-regular fa-circle text-gray-500 status-icon text-lg';
+            } else {
+                statusIcon.className = 'fa-regular fa-circle text-gray-600 status-icon text-lg';
+            }
         }
 
         function resetModules() {
-            ['moduleStatic', 'moduleAI', 'moduleDynamic'].forEach(id => {
+            Object.keys(moduleThemes).forEach(id => {
                 const el = document.getElementById(id);
-                // Reset State
-                el.setAttribute('data-enabled', 'false');
-                el.setAttribute('data-selected', 'false');
-                
-                // Reset Styles (Disable look)
-                el.classList.add('opacity-30', 'cursor-not-allowed');
-                el.classList.remove('opacity-100', 'cursor-pointer', 'border-cyan-500/50', 'border-blue-500/50', 'border-purple-500/50');
-                el.classList.add('border-gray-700');
-                
-                // Reset Icon Colors
-                el.querySelector('.icon-bg').className = "w-8 h-8 rounded bg-gray-700 flex items-center justify-center icon-bg transition-colors";
-                el.querySelector('.icon').className = "fa-solid " + (id === 'moduleStatic' ? 'fa-code' : id === 'moduleAI' ? 'fa-brain' : 'fa-running') + " text-gray-400 icon transition-colors";
-                el.querySelector('.module-title').classList.remove('text-white');
-                el.querySelector('.module-title').classList.add('text-gray-300');
-                
-                // Reset Checkmark
-                const statusIcon = el.querySelector('.status-icon');
-                statusIcon.className = "fa-regular fa-circle text-gray-600 status-icon text-lg transition-transform duration-300";
+                applyModuleStyle(el, false, false, moduleThemes[id]);
             });
         }
 
-        // Activates the module (makes it allowed for this file type)
-        function activateModule(id, bgClass, textClass, borderClass) {
+        function enableModule(id, selected = true) {
             const el = document.getElementById(id);
-            el.setAttribute('data-enabled', 'true');
-            // Store theme classes for toggling later
-            el.setAttribute('data-theme-bg', bgClass);
-            el.setAttribute('data-theme-text', textClass);
-            el.setAttribute('data-theme-border', borderClass);
-            
-            // Default to selected
-            selectModule(id, true);
+            applyModuleStyle(el, true, selected, moduleThemes[id]);
         }
 
-        // Handles user click
         function toggleModule(id) {
             const el = document.getElementById(id);
-            if (el.getAttribute('data-enabled') !== 'true') return; // Ignore if disabled
-
-            const isSelected = el.getAttribute('data-selected') === 'true';
-            selectModule(id, !isSelected);
-            checkAnalyzeButton();
+            if (el.dataset.enabled !== 'true') return;
+            const selected = el.dataset.selected === 'true';
+            applyModuleStyle(el, true, !selected, moduleThemes[id]);
+            updateAnalyzeButton();
         }
 
-        // Internal function to update visual state based on selection
-        function selectModule(id, isSelected) {
-            const el = document.getElementById(id);
-            const bgClass = el.getAttribute('data-theme-bg');
-            const textClass = el.getAttribute('data-theme-text');
-            const borderClass = el.getAttribute('data-theme-border');
-            
-            el.setAttribute('data-selected', isSelected.toString());
-            
-            // Common Active Styles
-            el.classList.remove('opacity-30', 'cursor-not-allowed');
-            el.classList.add('cursor-pointer');
-
-            if (isSelected) {
-                // Selected State (Bright, Colored)
-                el.classList.remove('opacity-60', 'border-gray-600');
-                el.classList.add('opacity-100', borderClass);
-                
-                el.querySelector('.icon-bg').classList.add(bgClass.split(' ')[0]);
-                el.querySelector('.icon').classList.remove('text-gray-400');
-                el.querySelector('.icon').classList.add(textClass);
-                
-                el.querySelector('.module-title').classList.add('text-white');
-                
-                const statusIcon = el.querySelector('.status-icon');
-                statusIcon.className = `fa-solid fa-circle-check ${textClass} status-icon text-lg`;
-                statusIcon.style.transform = "scale(1.1)";
+        function updateAnalyzeButton() {
+            const fileReady = !!currentFileMeta;
+            const anySelected = Object.keys(moduleThemes).some(id => document.getElementById(id).dataset.selected === 'true');
+            if (fileReady && anySelected) {
+                analyzeBtn.disabled = false;
+                analyzeBtn.className = 'w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white cursor-pointer transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-[1.02]';
             } else {
-                // Unselected but Enabled State (Dimmer, Grayscale-ish)
-                el.classList.remove('opacity-100', borderClass);
-                el.classList.add('opacity-60', 'border-gray-600'); // Slightly visible but dim
-                
-                // Revert Icon colors to gray but keep shape
-                el.querySelector('.icon-bg').classList.remove(bgClass.split(' ')[0]);
-                el.querySelector('.icon').classList.remove(textClass);
-                el.querySelector('.icon').classList.add('text-gray-400');
-                
-                el.querySelector('.module-title').classList.remove('text-white');
-                
-                const statusIcon = el.querySelector('.status-icon');
-                statusIcon.className = "fa-regular fa-circle text-gray-500 status-icon text-lg";
-                statusIcon.style.transform = "scale(1)";
+                analyzeBtn.disabled = true;
+                analyzeBtn.className = 'w-full py-4 rounded-xl font-bold text-lg bg-gray-700 text-gray-400 cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg';
             }
         }
 
-        function checkAnalyzeButton() {
-            const btn = document.getElementById('analyzeBtn');
-            const fileUploaded = document.getElementById('fileInput').files.length > 0;
-            
-            // Check if at least one module is selected
-            const anyModuleSelected = ['moduleStatic', 'moduleAI', 'moduleDynamic'].some(id => 
-                document.getElementById(id).getAttribute('data-selected') === 'true'
-            );
-
-            if (fileUploaded && anyModuleSelected) {
-                btn.disabled = false;
-                btn.className = "w-full py-4 rounded-xl font-bold text-lg bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white cursor-pointer transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-[1.02]";
-                btn.innerHTML = '<i class="fa-solid fa-play"></i> 开始分析';
-            } else {
-                btn.disabled = true;
-                btn.className = "w-full py-4 rounded-xl font-bold text-lg bg-gray-700 text-gray-400 cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg";
-                if(!fileUploaded) btn.innerHTML = '<i class="fa-solid fa-play"></i> 等待上传...';
-                else btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> 请选择至少一个检测模块';
+        async function uploadFile(file) {
+            uploadError.classList.add('hidden');
+            const form = new FormData();
+            form.append('file', file);
+            try {
+                const resp = await fetch(`${API_BASE}/api/upload/single`, { method: 'POST', body: form });
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.detail || '上传失败');
+                currentFileMeta = data.data;
+                document.getElementById('fileName').innerText = currentFileMeta.filename;
+                document.getElementById('fileSize').innerText = (currentFileMeta.file_size / 1024 / 1024).toFixed(2) + ' MB';
+                document.getElementById('fileType').innerText = `类型：${currentFileMeta.file_type}  MD5：${currentFileMeta.md5}`;
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('fileInfo').classList.remove('hidden');
+                resetModules();
+                if (currentFileMeta.file_type === 'EVTX') {
+                    enableModule('moduleDynamic', true);
+                } else {
+                    enableModule('moduleStatic', true);
+                    enableModule('moduleAI', true);
+                }
+                updateAnalyzeButton();
+            } catch (err) {
+                uploadError.innerText = `上传失败：${err}`;
+                uploadError.classList.remove('hidden');
             }
         }
 
-        function startAnalysis() {
-            const loading = document.getElementById('reportLoading');
-            const empty = document.getElementById('reportEmpty');
-            const content = document.getElementById('reportContent');
+        async function startAnalysis() {
+            if (!currentFileMeta) return;
+            reportEmpty.classList.add('hidden');
+            reportContent.classList.add('hidden');
+            reportLoading.classList.remove('hidden');
+            downloadBtn.disabled = true;
+            lastReportMarkdown = '';
 
-            empty.classList.add('hidden');
-            content.classList.add('hidden');
-            loading.classList.remove('hidden');
+            const modules = Object.keys(moduleThemes)
+                .filter(id => document.getElementById(id).dataset.selected === 'true')
+                .map(id => id === 'moduleStatic' ? 'static' : id === 'moduleAI' ? 'ai' : 'dynamic');
+            document.getElementById('loadingSteps').innerHTML = modules.map(m => `<p class="opacity-60">正在执行 ${m.toUpperCase()} 模块...</p>`).join('');
 
-            // Simulated Steps based on selected modules
-            const staticSelected = document.getElementById('moduleStatic').getAttribute('data-selected') === 'true';
-            const aiSelected = document.getElementById('moduleAI').getAttribute('data-selected') === 'true';
-            
-            // Reset loading text
-            document.getElementById('loadingStep1').className = "transition-opacity opacity-0 text-gray-500";
-            document.getElementById('loadingStep2').className = "transition-opacity opacity-0 text-gray-500";
-            
-            // Animate loading text
-            if(staticSelected) setTimeout(() => document.getElementById('loadingStep1').className = "transition-opacity opacity-100 text-cyan-400", 500);
-            if(aiSelected) setTimeout(() => document.getElementById('loadingStep2').className = "transition-opacity opacity-100 text-blue-400", 2000);
-            
-            setTimeout(() => document.getElementById('loadingStep3').classList.remove('opacity-0'), 3000);
-
-            setTimeout(() => {
-                loading.classList.add('hidden');
-                content.classList.remove('hidden');
-                renderReport();
-            }, 4500);
+            try {
+                const resp = await fetch(`${API_BASE}/api/detection/run`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        file_id: currentFileMeta.file_id,
+                        modules,
+                        internet: document.getElementById('internetToggle').checked
+                    })
+                });
+                const data = await resp.json();
+                if (!resp.ok) throw new Error(data.detail || '分析失败');
+                renderResults(data.data);
+            } catch (err) {
+                reportContent.classList.remove('hidden');
+                reportContent.innerHTML = `<p class="text-red-400">分析失败：${err}</p>`;
+            } finally {
+                reportLoading.classList.add('hidden');
+            }
         }
 
-        function renderReport() {
-            const internet = document.getElementById('internetToggle').checked;
-            const staticSelected = document.getElementById('moduleStatic').getAttribute('data-selected') === 'true';
-            const aiSelected = document.getElementById('moduleAI').getAttribute('data-selected') === 'true';
-            const dynamicSelected = document.getElementById('moduleDynamic').getAttribute('data-selected') === 'true';
+        function renderResults(payload) {
+            const { results, llm_report } = payload;
+            const modulesMd = results.map(r => {
+                const status = r.status === 'success' ? '成功' : (r.status === 'skipped' ? '跳过' : '失败');
+                const verdict = r.is_malicious === null ? '-' : (r.is_malicious ? '恶意' : '良性');
+                const detailLines = [];
+                if (r.message) detailLines.push(`- 描述：${r.message}`);
+                if (r.matches && r.matches.length) {
+                    detailLines.push(`- 命中规则（${r.matches.length}）：${r.matches.map(m => m.rule_name).join(', ')}`);
+                }
+                if (r.prediction) {
+                    detailLines.push(`- 预测详情：${JSON.stringify(r.prediction)}`);
+                }
+                return `- **模块：${r.module.toUpperCase()}**\n  - 状态：${status}\n  - 判定：${verdict}${detailLines.length ? '\n  ' + detailLines.join('\n  ') : ''}`;
+            }).join('\n');
 
-            // Generate report content based on selections
-            let staticResult = staticSelected ? "| **静态检测** | ⚠️ 恶意 | 匹配 YARA 规则 \`WannaCry_Ransomware\` |" : "| **静态检测** | - | 未选择该模块 |";
-            let aiResult = aiSelected ? "| **AI 检测** | ⚠️ 恶意 | 恶意代码相似度 98.5% |" : "| **AI 检测** | - | 未选择该模块 |";
-            let dynamicResult = dynamicSelected ? "| **动态检测** | ✅ 良性 | 无异常行为 |" : "| **动态检测** | - | 未启用 (非 EVTX) |";
+            const normalizeMarkdown = (text) => {
+                if (!text) return '';
+                let out = text.trim();
+                if (out.startsWith('```')) {
+                    out = out.replace(/^```[a-zA-Z]*\n?/, '').replace(/```\s*$/, '');
+                }
+                return out;
+            };
+
+            const llmMarkdown = normalizeMarkdown(llm_report.report);
 
             const md = `
-# 恶意程序分析报告
+# 恶意文件检测报告
+**样本名称**：${payload.file.filename}  
+**文件类型**：${payload.file.file_type}  
+**MD5**：${payload.file.md5}  
+**检测模块**：${payload.modules.join(', ')}
 
-**样本名称**: ${document.getElementById('fileName').innerText}  
-**威胁等级**: <span style="color:#ef4444; font-weight:bold;">高危 (High)</span>  
-**检测时间**: ${new Date().toLocaleString()}
+## 引擎结果
+${modulesMd}
 
----
-
-## 1. 检测结果汇总
-
-| 模块 | 结果 | 详情 |
-|------|------|------|
-${staticResult}
-${aiResult}
-${dynamicResult}
-
-## 2. 行为分析
-
-${staticSelected || aiSelected ? `系统监测到以下可疑行为特征：
-* 尝试修改注册表启动项 \`HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\`
-* 调用加密相关 API \`CryptEncrypt\`` : '未进行深度行为检测。'}
-* ${internet ? '尝试连接 C2 服务器 `192.168.1.105` (已确认为已知恶意IP)' : '尝试建立异常网络连接'}
-
-## 3. 威胁情报 (联网增强)
-
-${internet ? '> **INTEL UPDATE:** 该样本 Hash 与 **Lazarus Group** 攻击活动高度相关。CVE-2017-0144 (EternalBlue) 被用于传播。' : '> *未启用联网查询，仅基于本地特征分析。建议启用 Internet 选项以获取最新情报。*'}
-
-## 4. 防护建议
-
-1.  立即隔离受感染主机。
-2.  封锁相关 IP 地址。
-3.  更新系统补丁，特别是 SMB 服务。
-            `;
-            document.getElementById('reportContent').innerHTML = marked.parse(md);
+## LLM 分析
+${llmMarkdown || '（无 LLM 输出）'}
+`;
+            lastReportMarkdown = md;
+            reportContent.innerHTML = window.marked ? marked.parse(md) : md.replace(/\n/g, '<br>');
+            reportContent.classList.remove('hidden');
+            reportEmpty.classList.add('hidden');
+            downloadBtn.disabled = false;
         }
 
-        // Matrix Rain (Background)
+        fileInput.addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) uploadFile(file);
+        });
+
+        dropZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropZone.classList.add('border-cyan-500');
+        });
+        dropZone.addEventListener('dragleave', e => {
+            e.preventDefault();
+            dropZone.classList.remove('border-cyan-500');
+        });
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('border-cyan-500');
+            const file = e.dataTransfer.files[0];
+            if (file) uploadFile(file);
+        });
+
+        document.getElementById('removeBtn').addEventListener('click', () => {
+            currentFileMeta = null;
+            fileInput.value = '';
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('fileInfo').classList.add('hidden');
+            resetModules();
+            updateAnalyzeButton();
+        });
+
+        Object.keys(moduleThemes).forEach(id => {
+            document.getElementById(id).addEventListener('click', () => toggleModule(id));
+        });
+
+        analyzeBtn.addEventListener('click', startAnalysis);
+        downloadBtn.addEventListener('click', () => {
+            if (!lastReportMarkdown) return;
+            const blob = new Blob([lastReportMarkdown], { type: 'text/markdown;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentFileMeta?.filename || 'report'}.md`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        resetModules();
+        updateAnalyzeButton();
+
+        // Matrix Rain
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
         let width = canvas.width = window.innerWidth;
