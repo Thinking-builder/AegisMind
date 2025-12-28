@@ -32,6 +32,10 @@ python -m http.server 8000
 uvicorn backend.main:app --host 0.0.0.0 --port 8001
 ```
 
+## 关于LLM API
+
+目前我们调用的API是来自智谱清言的GLM-4，你需要通过`llm_config.example.json`在config目录创建一个llm_config.json进行配置。目前我们不提供公开API-key。
+
 ## 关于批量运行
 
 需要准备一个csv格式与`1.csv`格式保持相同：
@@ -41,10 +45,6 @@ uvicorn backend.main:app --host 0.0.0.0 --port 8001
 |Lab06-02.exe|1|
 
 这样我们就能够输出对应需要测试的指标。
-
-## 关于LLM API
-
-目前我们调用的API是
 
 ## 子文件功能与运行实例
 
