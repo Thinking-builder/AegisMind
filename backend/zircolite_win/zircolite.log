@@ -1448,3 +1448,279 @@ Finished in 0 seconds
 2025-12-28 13:30:00 INFO     [+] Cleaning
 2025-12-28 13:30:00 INFO     
 Finished in 0 seconds
+2025-12-29 01:09:44 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:09:44 INFO     [+] Modules imports status: OK
+2025-12-29 01:09:44 INFO     [+] Loading ruleset(s)
+2025-12-29 01:09:44 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:09:44 INFO     [+] Checking prerequisites
+2025-12-29 01:09:44 INFO     [+] Extracting events Using 'tmp-4D7YLDGS' directory 
+2025-12-29 01:09:44 INFO     [+] Processing events
+2025-12-29 01:09:44 INFO     [+] Creating model
+2025-12-29 01:09:44 INFO     [+] Inserting data
+2025-12-29 01:09:44 INFO     [+] Cleaning unused objects
+2025-12-29 01:09:44 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:09:44 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_c272277c-e1c8-46e2-9217-4a18eab8901b_1766941781.json
+2025-12-29 01:09:44 INFO     [+] Cleaning
+2025-12-29 01:09:44 INFO     
+Finished in 0 seconds
+2025-12-29 01:09:47 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:09:47 INFO     [+] Modules imports status: OK
+2025-12-29 01:09:47 INFO     [+] Loading ruleset(s)
+2025-12-29 01:09:47 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:09:47 INFO     [+] Checking prerequisites
+2025-12-29 01:09:47 INFO     [+] Extracting events Using 'tmp-SVRSKWRQ' directory 
+2025-12-29 01:09:47 INFO     [+] Processing events
+2025-12-29 01:09:47 INFO     [+] Creating model
+2025-12-29 01:09:47 INFO     [+] Inserting data
+2025-12-29 01:09:47 INFO     [+] Cleaning unused objects
+2025-12-29 01:09:47 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:09:47 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_34e1ea31-17d3-4355-b8ff-79a62583f228_1766941785.json
+2025-12-29 01:09:47 INFO     [+] Cleaning
+2025-12-29 01:09:47 INFO     
+Finished in 0 seconds
+2025-12-29 01:09:50 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:09:50 INFO     [+] Modules imports status: OK
+2025-12-29 01:09:50 INFO     [+] Loading ruleset(s)
+2025-12-29 01:09:50 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:09:50 INFO     [+] Checking prerequisites
+2025-12-29 01:09:50 INFO     [+] Extracting events Using 'tmp-PPP7Q7GK' directory 
+2025-12-29 01:09:50 INFO     [+] Processing events
+2025-12-29 01:09:50 INFO     [+] Creating model
+2025-12-29 01:09:50 INFO     [+] Inserting data
+2025-12-29 01:09:50 INFO     [+] Cleaning unused objects
+2025-12-29 01:09:50 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:09:50 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_16a48574-7f2b-4ae8-b5be-4d8c2404bc2c_1766941788.json
+2025-12-29 01:09:50 INFO     [+] Cleaning
+2025-12-29 01:09:50 INFO     
+Finished in 0 seconds
+2025-12-29 01:09:52 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:09:52 INFO     [+] Modules imports status: OK
+2025-12-29 01:09:52 INFO     [+] Loading ruleset(s)
+2025-12-29 01:09:53 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:09:53 INFO     [+] Checking prerequisites
+2025-12-29 01:09:53 INFO     [+] Extracting events Using 'tmp-FD25F4S4' directory 
+2025-12-29 01:09:53 INFO     [+] Processing events
+2025-12-29 01:09:53 INFO     [+] Creating model
+2025-12-29 01:09:53 INFO     [+] Inserting data
+2025-12-29 01:09:53 INFO     [+] Cleaning unused objects
+2025-12-29 01:09:53 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:09:53 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_99fdabcf-e538-4c8b-a6a4-916caa99944a_1766941791.json
+2025-12-29 01:09:53 INFO     [+] Cleaning
+2025-12-29 01:09:53 INFO     
+Finished in 0 seconds
+2025-12-29 01:11:38 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:11:38 INFO     [+] Modules imports status: OK
+2025-12-29 01:11:38 INFO     [+] Loading ruleset(s)
+2025-12-29 01:11:38 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:11:38 INFO     [+] Checking prerequisites
+2025-12-29 01:11:38 INFO     [+] Extracting events Using 'tmp-B5B7QGYQ' directory 
+2025-12-29 01:11:38 INFO     [+] Processing events
+2025-12-29 01:11:38 INFO     [+] Creating model
+2025-12-29 01:11:38 INFO     [+] Inserting data
+2025-12-29 01:11:38 INFO     [+] Cleaning unused objects
+2025-12-29 01:11:38 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:11:39 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_4c56ad66-96c9-4032-a358-92a55382dad3_1766941896.json
+2025-12-29 01:11:39 INFO     [+] Cleaning
+2025-12-29 01:11:39 INFO     
+Finished in 0 seconds
+2025-12-29 01:11:41 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:11:41 INFO     [+] Modules imports status: OK
+2025-12-29 01:11:41 INFO     [+] Loading ruleset(s)
+2025-12-29 01:11:41 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:11:41 INFO     [+] Checking prerequisites
+2025-12-29 01:11:41 INFO     [+] Extracting events Using 'tmp-KMFYZIOC' directory 
+2025-12-29 01:11:41 INFO     [+] Processing events
+2025-12-29 01:11:41 INFO     [+] Creating model
+2025-12-29 01:11:41 INFO     [+] Inserting data
+2025-12-29 01:11:41 INFO     [+] Cleaning unused objects
+2025-12-29 01:11:41 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:11:42 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_2b404499-3d77-45cb-b016-3679ad3a16ea_1766941899.json
+2025-12-29 01:11:42 INFO     [+] Cleaning
+2025-12-29 01:11:42 INFO     
+Finished in 0 seconds
+2025-12-29 01:11:44 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:11:44 INFO     [+] Modules imports status: OK
+2025-12-29 01:11:44 INFO     [+] Loading ruleset(s)
+2025-12-29 01:11:44 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:11:44 INFO     [+] Checking prerequisites
+2025-12-29 01:11:44 INFO     [+] Extracting events Using 'tmp-31XDE142' directory 
+2025-12-29 01:11:44 INFO     [+] Processing events
+2025-12-29 01:11:44 INFO     [+] Creating model
+2025-12-29 01:11:44 INFO     [+] Inserting data
+2025-12-29 01:11:44 INFO     [+] Cleaning unused objects
+2025-12-29 01:11:44 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:11:45 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_00c36452-1b53-4cb3-ad00-eb49a86694ce_1766941902.json
+2025-12-29 01:11:45 INFO     [+] Cleaning
+2025-12-29 01:11:45 INFO     
+Finished in 0 seconds
+2025-12-29 01:11:48 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:11:48 INFO     [+] Modules imports status: OK
+2025-12-29 01:11:48 INFO     [+] Loading ruleset(s)
+2025-12-29 01:11:48 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:11:48 INFO     [+] Checking prerequisites
+2025-12-29 01:11:48 INFO     [+] Extracting events Using 'tmp-51YCCAHK' directory 
+2025-12-29 01:11:48 INFO     [+] Processing events
+2025-12-29 01:11:48 INFO     [+] Creating model
+2025-12-29 01:11:48 INFO     [+] Inserting data
+2025-12-29 01:11:48 INFO     [+] Cleaning unused objects
+2025-12-29 01:11:48 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:11:48 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_000d3a9a-e2ca-4282-a7b9-791a2c80edca_1766941906.json
+2025-12-29 01:11:48 INFO     [+] Cleaning
+2025-12-29 01:11:48 INFO     
+Finished in 0 seconds
+2025-12-29 01:15:08 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:15:08 INFO     [+] Modules imports status: OK
+2025-12-29 01:15:08 INFO     [+] Loading ruleset(s)
+2025-12-29 01:15:08 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:15:08 INFO     [+] Checking prerequisites
+2025-12-29 01:15:09 INFO     [+] Extracting events Using 'tmp-AUGYQ3LT' directory 
+2025-12-29 01:15:09 INFO     [+] Processing events
+2025-12-29 01:15:09 INFO     [+] Creating model
+2025-12-29 01:15:09 INFO     [+] Inserting data
+2025-12-29 01:15:09 INFO     [+] Cleaning unused objects
+2025-12-29 01:15:09 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:15:09 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_9a96ba2a-c08d-44d0-9fa8-9ab11efa0139_1766942106.json
+2025-12-29 01:15:09 INFO     [+] Cleaning
+2025-12-29 01:15:09 INFO     
+Finished in 0 seconds
+2025-12-29 01:15:11 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:15:11 INFO     [+] Modules imports status: OK
+2025-12-29 01:15:11 INFO     [+] Loading ruleset(s)
+2025-12-29 01:15:11 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:15:11 INFO     [+] Checking prerequisites
+2025-12-29 01:15:11 INFO     [+] Extracting events Using 'tmp-X4ZTX7CY' directory 
+2025-12-29 01:15:12 INFO     [+] Processing events
+2025-12-29 01:15:12 INFO     [+] Creating model
+2025-12-29 01:15:12 INFO     [+] Inserting data
+2025-12-29 01:15:12 INFO     [+] Cleaning unused objects
+2025-12-29 01:15:12 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:15:12 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_a79569e1-774f-4116-8eeb-41c7c2b8a38a_1766942110.json
+2025-12-29 01:15:12 INFO     [+] Cleaning
+2025-12-29 01:15:12 INFO     
+Finished in 0 seconds
+2025-12-29 01:15:14 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:15:14 INFO     [+] Modules imports status: OK
+2025-12-29 01:15:14 INFO     [+] Loading ruleset(s)
+2025-12-29 01:15:14 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:15:14 INFO     [+] Checking prerequisites
+2025-12-29 01:15:14 INFO     [+] Extracting events Using 'tmp-U6UUG1M1' directory 
+2025-12-29 01:15:14 INFO     [+] Processing events
+2025-12-29 01:15:14 INFO     [+] Creating model
+2025-12-29 01:15:14 INFO     [+] Inserting data
+2025-12-29 01:15:14 INFO     [+] Cleaning unused objects
+2025-12-29 01:15:14 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:15:15 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_ee2ae104-f36b-41ad-b103-b73d32297c35_1766942112.json
+2025-12-29 01:15:15 INFO     [+] Cleaning
+2025-12-29 01:15:15 INFO     
+Finished in 0 seconds
+2025-12-29 01:15:17 INFO     
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨[¨€¨€¨€¨€¨€¨€¨[  ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨€¨€¨€¨€¨[ ¨€¨€¨[     ¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨€¨€¨€¨X¨a¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨X¨T¨T¨T¨T¨a¨€¨€¨X¨T¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U¨^¨T¨T¨€¨€¨X¨T¨T¨a¨€¨€¨X¨T¨T¨T¨T¨a
+      ¨€¨€¨€¨X¨a ¨€¨€¨U¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨[
+     ¨€¨€¨€¨X¨a  ¨€¨€¨U¨€¨€¨X¨T¨T¨€¨€¨[¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U¨€¨€¨U     ¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨X¨T¨T¨a
+    ¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U¨€¨€¨U  ¨€¨€¨U¨^¨€¨€¨€¨€¨€¨€¨[¨^¨€¨€¨€¨€¨€¨€¨X¨a¨€¨€¨€¨€¨€¨€¨€¨[¨€¨€¨U   ¨€¨€¨U   ¨€¨€¨€¨€¨€¨€¨€¨[
+    ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a¨^¨T¨a  ¨^¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨a ¨^¨T¨T¨T¨T¨T¨T¨a¨^¨T¨a   ¨^¨T¨a   ¨^¨T¨T¨T¨T¨T¨T¨a
+   -= Standalone Sigma Detection tool for EVTX/Auditd/Sysmon Linux =-
+    
+2025-12-29 01:15:17 INFO     [+] Modules imports status: OK
+2025-12-29 01:15:17 INFO     [+] Loading ruleset(s)
+2025-12-29 01:15:17 INFO     [36m   [+] Loaded JSON/Zircolite ruleset : C:\Users\wangyumeng\Desktop\Lab\AegisMind\compiled_rules\sigma_ruleset\ruleset.json[39m
+2025-12-29 01:15:17 INFO     [+] Checking prerequisites
+2025-12-29 01:15:17 INFO     [+] Extracting events Using 'tmp-KKZLDDT1' directory 
+2025-12-29 01:15:17 INFO     [+] Processing events
+2025-12-29 01:15:17 INFO     [+] Creating model
+2025-12-29 01:15:17 INFO     [+] Inserting data
+2025-12-29 01:15:17 INFO     [+] Cleaning unused objects
+2025-12-29 01:15:17 INFO     [+] Executing ruleset - 3291 rules
+2025-12-29 01:15:17 INFO     [+] Results written in : C:\Users\wangyumeng\Desktop\Lab\AegisMind\storage\reports\zircolite\zircolite_e19592e0-0db1-4092-a35b-8c5c607131fb_1766942115.json
+2025-12-29 01:15:17 INFO     [+] Cleaning
+2025-12-29 01:15:17 INFO     
+Finished in 0 seconds

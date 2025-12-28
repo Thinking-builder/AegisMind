@@ -1,6 +1,7 @@
 import csv
 import io
 import json
+from pathlib import Path
 from typing import Dict, Optional, Tuple
 
 from backend.models.schemas import PerformanceMetrics
@@ -19,6 +20,11 @@ def _parse_label(value: str) -> Optional[int]:
         return 1 if num > 0 else 0
     except ValueError:
         return None
+
+
+def _normalize_name(value: str) -> str:
+    name = Path(str(value)).name
+    return Path(name).stem
 
 
 def _find_name_key(row: Dict[str, str]) -> Optional[str]:
@@ -58,7 +64,7 @@ def load_ground_truth(file_content: bytes) -> Dict[str, int]:
                     if name_key and label_key:
                         parsed = _parse_label(item[label_key])
                         if parsed is not None:
-                            result[item[name_key]] = parsed
+                            result[_normalize_name(item[name_key])] = parsed
             return result
     except Exception:
         pass
@@ -73,7 +79,7 @@ def load_ground_truth(file_content: bytes) -> Dict[str, int]:
             if name_key and label_key:
                 parsed = _parse_label(row[label_key])
                 if parsed is not None:
-                    result[row[name_key]] = parsed
+                    result[_normalize_name(row[name_key])] = parsed
         return result
     except Exception:
         return {}
@@ -82,10 +88,12 @@ def load_ground_truth(file_content: bytes) -> Dict[str, int]:
 def evaluate(predictions: Dict[str, bool], ground_truth: Dict[str, int]) -> Tuple[PerformanceMetrics, Dict[str, bool]]:
     tp = tn = fp = fn = 0
     verdicts: Dict[str, bool] = {}
-    for name, pred in predictions.items():
-        if name not in ground_truth:
+    normalized_gt = {_normalize_name(name): label for name, label in ground_truth.items()}
+    normalized_pred = {_normalize_name(name): pred for name, pred in predictions.items()}
+    for name, pred in normalized_pred.items():
+        if name not in normalized_gt:
             continue
-        actual = bool(int(ground_truth[name]))
+        actual = bool(int(normalized_gt[name]))
         verdicts[name] = pred
         if pred and actual:
             tp += 1
@@ -109,14 +117,10 @@ def evaluate(predictions: Dict[str, bool], ground_truth: Dict[str, int]) -> Tupl
         # 错报率 = 标签为良性样本中被判断为恶意的数量 / 良性样本数量
         false_positive_rate=round(fp / neg_total, 4) if neg_total else 0.0,
         false_negatives=[
-            name
-            for name, pred in predictions.items()
-            if name in ground_truth and ground_truth[name] and not pred
+            name for name, pred in normalized_pred.items() if name in normalized_gt and normalized_gt[name] and not pred
         ],
         false_positives=[
-            name
-            for name, pred in predictions.items()
-            if name in ground_truth and not ground_truth[name] and pred
+            name for name, pred in normalized_pred.items() if name in normalized_gt and not normalized_gt[name] and pred
         ],
     )
     return metrics, verdicts

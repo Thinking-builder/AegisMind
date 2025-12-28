@@ -23,6 +23,7 @@ pip install sigmatools
 我们需要分别开启两个终端运行前端和后端，前端运行在8000端口上：
 
 ```bash
+cd FrontEnd
 python -m http.server 8000
 ```
 
