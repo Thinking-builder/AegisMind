@@ -42,6 +42,10 @@ uvicorn backend.main:app --host 0.0.0.0 --port 8001
 
 这样我们就能够输出对应需要测试的指标。
 
+## 关于LLM API
+
+目前我们调用的API是
+
 ## 子文件功能与运行实例
 
 ```bash
