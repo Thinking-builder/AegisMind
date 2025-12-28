@@ -1,0 +1,27 @@
+title: Suspicious SPN enumeration previous to Kerberoasting attack (native commands)
+description: Detects scenarios where an attacker attempts to retrieve SPN using commandline and native tools.
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0007-Discovery/T1087-Account%20discovery
+- https://github.com/nidem/kerberoast
+- https://github.com/cyberark/RiskySPN
+- https://pentestlab.blog/2018/06/04/spn-discovery/
+- https://adsecurity.org/?p=3458
+- https://www.security.com/threat-intelligence/us-china-espionage
+tags:
+- attack.account_discovery
+- attack.t1087.002 # Account Discovery: Domain Account
+author: mdecrevoisier
+status: experimental
+logsource:
+  product: windows
+  category: process_creation
+detection: # full command : 'setspn -T my_domain -Q */*'
+  selection:
+    NewProcessName|endswith: \setspn.exe
+    CommandLine|contains: # Perform query on the specified domain
+      - '/Q'
+      - '-Q'
+  condition: selection
+falsepositives:
+- Administrators
+level: high

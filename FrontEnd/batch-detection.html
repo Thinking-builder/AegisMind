@@ -84,7 +84,7 @@
                             <i class="fa-solid fa-code mb-1 block"></i> 静态
                         </div>
                         <div id="batchAI" data-selected="true" class="flex-1 p-2 bg-purple-600/20 text-purple-300 border border-purple-500 rounded text-center text-xs cursor-pointer hover:border-purple-400 transition">
-                            <i class="fa-solid fa-brain mb-1 block"></i> AI
+                            <i class="fa-solid fa-brain mb-1 block"></i> 神经网络
                         </div>
                         <div id="batchDynamic" data-selected="true" class="flex-1 p-2 bg-purple-600/20 text-purple-300 border border-purple-500 rounded text-center text-xs cursor-pointer hover:border-purple-400 transition">
                             <i class="fa-solid fa-running mb-1 block"></i> 动态
@@ -186,6 +186,8 @@
         let selectedFiles = [];
         let gtFile = null;
         let lastBatchResult = null;
+        let progressTimer = null;
+        let activeTaskId = null;
 
         function updateStartBtn() {
             startBtn.disabled = selectedFiles.length === 0;
@@ -225,15 +227,54 @@
         }
         ['batchStatic','batchAI','batchDynamic'].forEach(id => document.getElementById(id).addEventListener('click', () => toggleBatchModule(id)));
 
+        function updateProgress(percent, current) {
+            const safePercent = Math.max(0, Math.min(100, Number(percent) || 0));
+            progressBar.style.width = safePercent + '%';
+            progressPercent.innerText = Math.round(safePercent) + '%';
+            currentProcessFile.innerText = current || '';
+        }
+
+        function stopProgressPolling() {
+            if (progressTimer) {
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+        }
+
+        async function pollBatchStatus(taskId, initialErrors) {
+            stopProgressPolling();
+            const pollOnce = async () => {
+                const resp = await fetch(`${API_BASE}/api/detection/batch/status/${taskId}`);
+                const payload = await resp.json();
+                if (!resp.ok) throw new Error(payload.detail || 'Batch status failed');
+                const data = payload.data || {};
+                updateProgress(data.percent, data.current);
+                if (data.status === 'completed') {
+                    stopProgressPolling();
+                    lastBatchResult = data.result;
+                    renderBatchResult(lastBatchResult, data.errors || initialErrors || []);
+                    exportBtn.disabled = false;
+                    updateProgress(100, '');
+                    setTimeout(() => progressSection.classList.add('hidden'), 400);
+                } else if (data.status === 'failed') {
+                    stopProgressPolling();
+                    batchError.innerText = data.message || 'Batch failed';
+                    batchError.classList.remove('hidden');
+                    tableBody.innerHTML = '<tr id="tableEmpty"><td colspan="5" class="px-6 py-6 text-center text-gray-500">Batch failed</td></tr>';
+                    setTimeout(() => progressSection.classList.add('hidden'), 400);
+                }
+            };
+            await pollOnce();
+            progressTimer = setInterval(pollOnce, 800);
+        }
+
         async function startBatchAnalysis() {
             if (!selectedFiles.length) return;
             batchError.classList.add('hidden');
             progressSection.classList.remove('hidden');
-            progressBar.style.width = '30%';
-            progressPercent.innerText = '30%';
-            currentProcessFile.innerText = '';
+            updateProgress(0, '');
             metricsDashboard.classList.add('hidden');
-            tableBody.innerHTML = '<tr id="tableEmpty"><td colspan="5" class="px-6 py-6 text-center text-gray-500">正在分析...</td></tr>';
+            tableBody.innerHTML = '<tr id="tableEmpty"><td colspan="5" class="px-6 py-6 text-center text-gray-500">Analyzing...</td></tr>';
 
             const form = new FormData();
             selectedFiles.forEach(f => form.append('files', f));
@@ -245,19 +286,15 @@
             if (gtFile) form.append('ground_truth', gtFile);
 
             try {
-                const resp = await fetch(`${API_BASE}/api/detection/batch`, { method: 'POST', body: form });
+                const resp = await fetch(`${API_BASE}/api/detection/batch/start`, { method: 'POST', body: form });
                 const data = await resp.json();
-                if (!resp.ok) throw new Error(data.detail || '批量检测失败');
-                lastBatchResult = data.data.result;
-                renderBatchResult(lastBatchResult, data.data.summary.errors || []);
-                exportBtn.disabled = false;
-                progressBar.style.width = '100%';
-                progressPercent.innerText = '100%';
+                if (!resp.ok) throw new Error(data.detail || 'Batch start failed');
+                activeTaskId = data.data.task_id;
+                await pollBatchStatus(activeTaskId, data.data.errors || []);
             } catch (err) {
-                batchError.innerText = `执行失败：${err}`;
+                batchError.innerText = `Batch failed: ${err}`;
                 batchError.classList.remove('hidden');
-                tableBody.innerHTML = '<tr id="tableEmpty"><td colspan="5" class="px-6 py-6 text-center text-gray-500">任务未完成</td></tr>';
-            } finally {
+                tableBody.innerHTML = '<tr id="tableEmpty"><td colspan="5" class="px-6 py-6 text-center text-gray-500">Batch failed</td></tr>';
                 setTimeout(() => progressSection.classList.add('hidden'), 400);
             }
         }
@@ -265,11 +302,6 @@
         function renderBatchResult(result, errors) {
             tableBody.innerHTML = '';
             result.results.forEach((row, idx) => {
-                currentProcessFile.innerText = row.filename;
-                const percent = Math.round(((idx + 1) / result.results.length) * 100);
-                progressBar.style.width = percent + '%';
-                progressPercent.innerText = percent + '%';
-
                 const verdictColor = row.verdict === 'malicious' ? 'text-red-400' : 'text-green-400';
                 const modules = Object.entries(row.results)
                     .map(([k, v]) => `${k}:${v.is_malicious === null ? '-' : (v.is_malicious ? '恶意' : '良性')}`)

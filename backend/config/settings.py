@@ -15,6 +15,8 @@ MALCONV_DIR = PROJECT_ROOT.parent / "MalConv2-main"
 COMPILED_YARA_DIR = PROJECT_ROOT.parent / "compiled_rules"
 COMPILED_YARA_FILE = COMPILED_YARA_DIR / "all_rules.yac"
 COMPILED_YARA_FILE_ALT = COMPILED_YARA_DIR / "all_rules.yarc"
+ZIRCOLITE_RULESET = PROJECT_ROOT / "zircolite_win" / "rules" / "rules_windows_generic_pysigma.json"
+ZIRCOLITE_RULESET_ALT = PROJECT_ROOT.parent / "compiled_rules" / "sigma_ruleset" / "ruleset.json"
 
 LLM_CONFIG_PATH = PROJECT_ROOT / "config" / "llm_config.json"
 LLM_CONFIG_EXAMPLE = PROJECT_ROOT / "config" / "llm_config.example.json"

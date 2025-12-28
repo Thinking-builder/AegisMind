@@ -1,0 +1,30 @@
+title: SQL Server xp_cmdshell activation (native event)
+description: Detects scenarios where an attacker enable the xp_cmdshell in order to execute non SQL content and escalate privileges
+references:
+- https://github.com/mdecrevoisier/EVTX-to-MITRE-Attack/tree/master/TA0003-Persistence/T1505.001-SQL%20Stored%20Procedures
+- https://thedfirreport.com/2022/07/11/select-xmrig-from-sqlserver/
+- https://asec.ahnlab.com/en/52479/
+- https://www.microsoft.com/en-us/security/blog/2023/10/03/defending-new-vectors-threat-actors-attempt-sql-server-to-cloud-lateral-movement/
+- https://github.com/Azure/Azure-Sentinel/blob/master/Solutions/Azure%20SQL%20Database%20solution%20for%20sentinel/Hunting%20Queries/HuntingQuery-SuspiciousStoredProcedures.yaml
+tags:
+- attack.persistence
+- attack.T1505
+author: mdecrevoisier
+status: experimental
+logsource:
+  product: mssql
+  category: application
+detection:
+  selection_baseline:
+    EventID: 15457
+
+  selection_raw: # Safest approach, not localized and not dependent on system and application language
+    EventData|contains: '<Data>xp_cmdshell</Data><Data>0</Data><Data>1</Data>' # 0 is for previous status and 1 for new status
+
+  selection_enriched: # Alternative method using Message. However this field may be in a different language and dropped in some cases during collection phase
+    Message|contains: "option 'xp_cmdshell' changed from 0 to 1"
+
+  condition: selection_baseline and (selection_raw or selection_enriched)
+falsepositives:
+- None
+level: high
