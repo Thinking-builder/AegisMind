@@ -2,7 +2,7 @@ fastapi==0.115.5
 uvicorn==0.32.0
 python-multipart==0.0.9
 yara-python==4.5.4
-yyaml==6.0.3
+pyyaml==6.0.3
 python-evtx==0.8.1
 httpx==0.28.1
 torch==2.9.1
